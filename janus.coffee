@@ -1,27 +1,36 @@
 ###
 
-  StateManager
-
-    watch
+  Janus StateManager — Copyright (c) 2012 Joschka Kintscher
 
 ###
 
 class State
 
-  constructor: (@condition, @setup, @on, @off) ->
+  active: no
 
+  constructor: (@condition, @setup, @on, @off) ->
     @is_setup = no
 
+  on: () ->
+    @setup() unless @is_setup
+    @on()
+
+  off: () ->
+    @off()
 
 
 
-class StateManager
+class this.Janus
 
-  @states = []
-  @active = no
+  states : {}
+  started: no
 
 
-  attach: () ->
+  attach: (mediaQuery, callback_setup, callback_on, callback_off) ->
+
+    @states[mediaQuery] = [] unless @states.hasOwnProperty mediaQuery
+
+    @states[mediaQuery].push new State(mediaQuery, callback_setup, callback_on, callback_off)
 
 
   detach: () ->
@@ -29,12 +38,17 @@ class StateManager
 
 
   start: () ->
-    console.log "Start listening for onResize and onOrientationChange"
-    @active = yes
+
+    return if @started
+
+    @started = yes
+
+
+    for mediaQuery, list of @states
+      window.matchMedia(mediaQuery).addListener( (mql) =>
+        return unless @started
+      )
+
 
   stop: () ->
-    console.log "Stop this"
-    @active = no
-
-
-  _test: () ->
+    @started = no
