@@ -36,12 +36,17 @@
 
     function Janus() {}
 
+    Janus.prototype.mediaList = [];
+
     Janus.prototype.states = {};
 
     Janus.prototype.started = false;
 
     Janus.prototype.attach = function(mediaQuery, callback_setup, callback_on, callback_off) {
-      if (!this.states.hasOwnProperty(mediaQuery)) this.states[mediaQuery] = [];
+      if (!this.states.hasOwnProperty(mediaQuery)) {
+        this.states[mediaQuery] = [];
+        this._add_css_for(mediaQuery);
+      }
       return this.states[mediaQuery].push(new State(mediaQuery, callback_setup, callback_on, callback_off));
     };
 
@@ -56,7 +61,8 @@
       _results = [];
       for (mediaQuery in _ref) {
         list = _ref[mediaQuery];
-        _results.push(window.matchMedia(mediaQuery).addListener(function(mql) {
+        this.mediaList[mediaQuery] = window.matchMedia(mediaQuery);
+        _results.push(this.mediaList[mediaQuery].addListener(function(mql) {
           if (!_this.started) {}
         }));
       }
@@ -65,6 +71,14 @@
 
     Janus.prototype.stop = function() {
       return this.started = false;
+    };
+
+    Janus.prototype._add_css_for = function(mediaQuery) {
+      if (!this.style) {
+        this.style = document.createElement('style');
+        document.getElementsByTagName('head')[0].appendChild(this.style);
+      }
+      return this.style.appendChild(document.createTextNode("@media " + mediaQuery + " {.janus-test{}}"));
     };
 
     return Janus;
