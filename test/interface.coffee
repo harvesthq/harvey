@@ -2,14 +2,34 @@
 janus = new Janus
 
 
-janus.attach('screen and (max-width:600px)',
+qry1 = janus.attach('screen and (min-width:500px) and (max-width:900px)',
 () ->
-  console.log 'setup'
+  console.log 'SETUP', this.condition
 () ->
-  console.log 'on'
+  console.log 'ON', this.condition
 () ->
-  console.log 'off'
+  console.log 'OFF', this.condition
 )
+
+
+qry2 = janus.attach('screen and (max-width:600px)',
+() ->
+  console.log 'SETUP', this.condition
+() ->
+  console.log 'ON', this.condition
+() ->
+  console.log 'OFF', this.condition
+)
+
+qry2 = janus.attach('screen and (max-width:600px)',
+() ->
+  console.log 'SETUP', this.condition
+() ->
+  console.log 'ON', this.condition
+() ->
+  console.log 'OFF', this.condition
+)
+
 
 
 janus.start()
