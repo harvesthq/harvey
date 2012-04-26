@@ -35,6 +35,7 @@ class State
 class this.Janus
 
   states   : {}
+  queries  : []
   started  : no
 
 
@@ -51,6 +52,7 @@ class this.Janus
 
 
   detach: (state) ->
+
     for t, i in @states[state.condition]
       @states[t.condition][i] = undefined if state is t
 
@@ -62,14 +64,18 @@ class this.Janus
     @started = yes
 
     for mediaQuery of @states
-      @_register_query(mediaQuery) unless @mediaList.hasOwnProperty mediaQuery
+      @_watch_query(mediaQuery) unless mediaQuery in @queries
 
 
   stop: () ->
+
     @started = no
 
 
-  _register_query: (mediaQuery) ->
+
+  _watch_query: (mediaQuery) ->
+
+    @queries.push(mediaQuery)
 
     @_window_matchmedia(mediaQuery).addListener( (mql) =>
       return unless @started
@@ -82,29 +88,34 @@ class this.Janus
 
 
   ###
-
     Private methods to fix and polyfill the matchMedia interface for several engines
 
     * Inspired by Nicholas C. Zakas' article on the different problems with matchMedia
       http://www.nczonline.net/blog/2012/01/19/css-media-queries-in-javascript-part-2/
 
-    * Using a coffeescript port of Paul Irish's matchMedia.js polyfill
-
+    * Implementing a modified coffeescript version of Paul Irish's matchMedia.js polyfill
+      https://github.com/paulirish/matchMedia.js
   ###
 
 
   ###
-    FIX for Firefox/Gecko browsers that lose reference to the
+    [FIX] for Firefox/Gecko browsers that lose reference to the
     MediaQueryList object unless it's being stored for runtime
   ###
-  mediaList: {}
+  _mediaList : {}
 
   _window_matchmedia: (mediaQuery) ->
-    @mediaList[mediaQuery] = window.matchMedia(mediaQuery)
+
+    window.matchMedia = undefined
+    return @_mediaList[mediaQuery] = window.matchMedia(mediaQuery) if window.matchMedia
+
+    # [POLYFILL] for all browsers that don't support matchMedia()
+    @_matchMedia = new _matchMedia(this) unless @_matchMedia
+    @_matchMedia.nextQuery(mediaQuery)
 
 
   ###
-    FIX for Webkit engines that only trigger MediaQueryListListener when
+    [FIX] for Webkit engines that only trigger MediaQueryListListener when
     there is at least one CSS selector for the respective media query
   ###
   _add_css_for: (mediaQuery) ->
@@ -116,3 +127,54 @@ class this.Janus
     @style.appendChild(document.createTextNode("@media #{mediaQuery} {.janus-test{}}"))
 
 
+
+###
+  [FIX]/implementation of the matchMedia interface modified to work as a drop-in replacement for Janus
+###
+class _matchMedia
+
+  media_list: {}
+
+
+  constructor: (@ref) ->
+
+    window.addEventListener('resize',            () => @_process())
+    window.addEventListener('orientationChange', () => @_process())
+
+
+  # Mimic the native MediaQueryList.addListener() behaviour for @next_query
+  addListener: (listener) ->
+
+    @media_list[@next_query] = {callbacks: [], result: no} unless @media_list[@next_query]
+
+    @media_list[@next_query].callbacks.push(listener)
+
+
+  # Store the query that the next listener will be assigned to
+  nextQuery: (@next_query) ->
+    this
+
+
+  _process: () ->
+
+    for mediaQuery, list of @media_list
+
+      result = @_match_media(mediaQuery)
+      continue if result is list.result
+
+      list.result = result
+      callback({ matches: result, media: mediaQuery }) for callback in list.callbacks
+
+
+  _match_media: (mediaQuery) ->
+
+    unless @_test
+      @_test = document.createElement('div')
+      @_test.id = 'janus-mq-test'
+      @_test.style.cssText = 'position:absolute;top:-100em'
+      document.body.insertBefore(@_test, document.body.firstChild)
+
+    @_test.innerHTML = '&shy;<style media="' + mediaQuery + '">#janus-mq-test{width:42px;}</style>'
+    @_test.removeChild(@_test.firstChild)
+
+    @_test.offsetWidth is 42
