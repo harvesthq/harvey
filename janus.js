@@ -164,12 +164,14 @@
     _matchMedia.prototype.media_list = {};
 
     function _matchMedia(ref) {
-      var _this = this;
+      var evt,
+        _this = this;
       this.ref = ref;
-      window.addEventListener('resize', function() {
+      evt = window.attachEvent || window.addEventListener;
+      evt('resize', function() {
         return _this._process();
       });
-      window.addEventListener('orientationChange', function() {
+      evt('orientationChange', function() {
         return _this._process();
       });
     }

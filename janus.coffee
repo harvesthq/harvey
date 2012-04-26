@@ -137,8 +137,10 @@ class _matchMedia
 
   constructor: (@ref) ->
 
-    window.addEventListener('resize',            () => @_process())
-    window.addEventListener('orientationChange', () => @_process())
+    evt = window.attachEvent || window.addEventListener
+
+    evt('resize',            () => @_process())
+    evt('orientationChange', () => @_process())
 
 
   # Mimic the native MediaQueryList.addListener() behaviour for @next_query
