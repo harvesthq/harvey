@@ -106,7 +106,6 @@ class this.Janus
 
   _window_matchmedia: (mediaQuery) ->
 
-    window.matchMedia = undefined
     return @_mediaList[mediaQuery] = window.matchMedia(mediaQuery) if window.matchMedia
 
     # [POLYFILL] for all browsers that don't support matchMedia()
