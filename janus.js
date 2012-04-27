@@ -114,6 +114,11 @@
     };
 
     /*
+    
+        BEWARE: Here there be monsters! Don't dig too deep below this line.
+    
+        ------------------------------------------------------------------------------------
+    
         Private methods to fix and polyfill the matchMedia interface for several engines
     
         * Inspired by Nicholas C. Zakas' article on the different problems with matchMedia
@@ -131,6 +136,7 @@
     Janus.prototype._mediaList = {};
 
     Janus.prototype._window_matchmedia = function(mediaQuery) {
+      window.matchMedia = void 0;
       if (window.matchMedia) {
         return this._mediaList[mediaQuery] = window.matchMedia(mediaQuery);
       }

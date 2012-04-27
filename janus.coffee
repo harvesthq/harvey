@@ -88,6 +88,11 @@ class this.Janus
 
 
   ###
+
+    BEWARE: Here there be monsters! Don't dig too deep below this line.
+
+    ------------------------------------------------------------------------------------
+
     Private methods to fix and polyfill the matchMedia interface for several engines
 
     * Inspired by Nicholas C. Zakas' article on the different problems with matchMedia
@@ -106,6 +111,7 @@ class this.Janus
 
   _window_matchmedia: (mediaQuery) ->
 
+    window.matchMedia = undefined
     return @_mediaList[mediaQuery] = window.matchMedia(mediaQuery) if window.matchMedia
 
     # [POLYFILL] for all browsers that don't support matchMedia()
