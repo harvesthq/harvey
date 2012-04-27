@@ -5,7 +5,7 @@
 */
 
 (function() {
-  var State, _matchMedia,
+  var State, _mediaQueryList,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   State = (function() {
@@ -78,13 +78,18 @@
     };
 
     Janus.prototype.start = function() {
-      var mediaQuery, _results;
+      var mediaQuery, states, _ref, _results;
       if (this.started) return;
       this.started = true;
+      _ref = this.states;
       _results = [];
-      for (mediaQuery in this.states) {
+      for (mediaQuery in _ref) {
+        states = _ref[mediaQuery];
         if (__indexOf.call(this.queries, mediaQuery) < 0) {
-          _results.push(this._watch_query(mediaQuery));
+          this._watch_query(mediaQuery);
+        }
+        if (this._window_matchmedia(mediaQuery).matches) {
+          _results.push(this._update_states(states, true));
         } else {
           _results.push(void 0);
         }
@@ -101,12 +106,12 @@
       this.queries.push(mediaQuery);
       return this._window_matchmedia(mediaQuery).addListener(function(mql) {
         if (_this.started) {
-          return _this._update_state(_this.states[mediaQuery], mql.matches);
+          return _this._update_states(_this.states[mediaQuery], mql.matches);
         }
       });
     };
 
-    Janus.prototype._update_state = function(states, active) {
+    Janus.prototype._update_states = function(states, active) {
       var state, _i, _len, _results;
       _results = [];
       for (_i = 0, _len = states.length; _i < _len; _i++) {
@@ -122,7 +127,7 @@
 
     /*
     
-        BEWARE: Here there be monsters! Don't dig too deep below this line…
+        BEWARE: You're at the edge of the map, mate. Here there be monsters!
     
         ------------------------------------------------------------------------------------
     
@@ -143,6 +148,7 @@
     Janus.prototype._mediaList = {};
 
     Janus.prototype._window_matchmedia = function(mediaQuery) {
+      window.matchMedia = void 0;
       if (window.matchMedia) {
         return this._mediaList[mediaQuery] = window.matchMedia(mediaQuery);
       }
@@ -151,7 +157,7 @@
       */
       if (!this._listening) this._listen();
       if (!this._mediaList[mediaQuery]) {
-        this._mediaList[mediaQuery] = new _matchMedia(mediaQuery);
+        this._mediaList[mediaQuery] = new _mediaQueryList(mediaQuery);
       }
       return this._mediaList[mediaQuery];
     };
@@ -204,24 +210,20 @@
     [FIX]/implementation of the matchMedia interface modified to work as a drop-in replacement for Janus
   */
 
-  _matchMedia = (function() {
+  _mediaQueryList = (function() {
 
-    _matchMedia.prototype._callbacks = [];
-
-    _matchMedia.prototype.media = '';
-
-    _matchMedia.prototype.matches = false;
-
-    function _matchMedia(media) {
+    function _mediaQueryList(media) {
       this.media = media;
+      this._callbacks = [];
       this.matches = this._matches();
     }
 
-    _matchMedia.prototype.addListener = function(listener) {
-      return this._callbacks.push(listener);
+    _mediaQueryList.prototype.addListener = function(listener) {
+      this._callbacks.push(listener);
+      return;
     };
 
-    _matchMedia.prototype._process = function() {
+    _mediaQueryList.prototype._process = function() {
       var callback, current, _i, _len, _ref, _results;
       current = this._matches();
       if (this.matches === current) return;
@@ -235,7 +237,8 @@
       return _results;
     };
 
-    _matchMedia.prototype._matches = function() {
+    _mediaQueryList.prototype._matches = function() {
+      if (!this._test) this._test = document.getElementById('janus-mq-test');
       if (!this._test) {
         this._test = document.createElement('div');
         this._test.id = 'janus-mq-test';
@@ -247,7 +250,7 @@
       return this._test.offsetWidth === 42;
     };
 
-    return _matchMedia;
+    return _mediaQueryList;
 
   })();
 

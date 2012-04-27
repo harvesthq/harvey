@@ -1,0 +1,11 @@
+.dimensions {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  margin-top: -2em;
+
+  color: rgb(220,110,0);
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+}

@@ -14,6 +14,7 @@ class State
 
 
   activate: () ->
+
     return if @active
 
     unless @is_setup
@@ -23,7 +24,9 @@ class State
     @on()
     @active = yes
 
+
   deactivate: () ->
+
     return unless @active
 
     @off()
@@ -43,7 +46,7 @@ class this.Janus
 
     unless @states.hasOwnProperty mediaQuery
       @states[mediaQuery] = []
-      @_add_css_for(mediaQuery) # if userAgent is webkit
+      @_add_css_for(mediaQuery) # if userAgent is webkit to avoid extra DOM manipulation
 
     state = new State(mediaQuery, callback_setup, callback_on, callback_off)
     @states[mediaQuery].push(state)
@@ -63,8 +66,11 @@ class this.Janus
     return if @started
     @started = yes
 
-    for mediaQuery of @states
+    for mediaQuery, states of @states
       @_watch_query(mediaQuery) unless mediaQuery in @queries
+
+      # activate states for all valid media queries initially
+      @_update_states(states, yes) if @_window_matchmedia(mediaQuery).matches
 
 
   stop: () ->
@@ -77,19 +83,20 @@ class this.Janus
 
     @queries.push(mediaQuery)
 
-    @_window_matchmedia(mediaQuery).addListener( (mql) =>
-      @_update_state(@states[mediaQuery], mql.matches) if @started
+    @_window_matchmedia(mediaQuery).addListener((mql) =>
+      @_update_states(@states[mediaQuery], mql.matches) if @started
     )
 
 
-  _update_state: (states, active) ->
-    for state in states
+  _update_states: (states, active) ->
+
+    for state in states      
       if active then state.activate() else state.deactivate()
 
 
   ###
 
-    BEWARE: Here there be monsters! Don't dig too deep below this line…
+    BEWARE: You're at the edge of the map, mate. Here there be monsters!
 
     ------------------------------------------------------------------------------------
 
@@ -100,6 +107,7 @@ class this.Janus
 
     * Implementing a modified coffeescript version of Paul Irish's matchMedia.js polyfill
       https://github.com/paulirish/matchMedia.js
+
   ###
 
 
@@ -111,6 +119,7 @@ class this.Janus
 
   _window_matchmedia: (mediaQuery) ->
 
+    window.matchMedia = undefined
     return @_mediaList[mediaQuery] = window.matchMedia(mediaQuery) if window.matchMedia
 
     ###
@@ -120,9 +129,9 @@ class this.Janus
     # use native window events to wait and listen for changes
     @_listen() unless @_listening
 
-    @_mediaList[mediaQuery] = new _matchMedia(mediaQuery) unless @_mediaList[mediaQuery]
+    @_mediaList[mediaQuery] = new _mediaQueryList(mediaQuery) unless @_mediaList[mediaQuery]
 
-    # return the corresponding _matchMedia object
+    # return the corresponding _mediaQueryList object
     @_mediaList[mediaQuery]
 
 
@@ -158,20 +167,21 @@ class this.Janus
 ###
   [FIX]/implementation of the matchMedia interface modified to work as a drop-in replacement for Janus
 ###
-class _matchMedia
-
-  _callbacks: []
-
-  media: ''
-  matches: no
-
+class _mediaQueryList
 
   constructor: (@media) ->
-    @matches = @_matches()
+
+    @_callbacks = []
+    @matches    = @_matches()
+
 
   # Mimic the native MediaQueryList.addListener() behaviour for @next_query
   addListener: (listener) ->
+
     @_callbacks.push(listener)
+
+    # same return value as native addListener method
+    undefined
 
 
   _process: () ->
@@ -184,6 +194,8 @@ class _matchMedia
 
 
   _matches: () ->
+
+    @_test = document.getElementById('janus-mq-test') unless @_test
 
     unless @_test
       @_test = document.createElement('div')
