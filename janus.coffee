@@ -78,18 +78,18 @@ class this.Janus
     @queries.push(mediaQuery)
 
     @_window_matchmedia(mediaQuery).addListener( (mql) =>
-      return unless @started
-
-      change = if mql.matches then 'activate' else 'deactivate'
-
-      state[change]() for state in @states[mediaQuery]
+      @_update_state(@states[mediaQuery], mql.matches) if @started
     )
 
+
+  _update_state: (states, active) ->
+    for state in states
+      if active then state.activate() else state.deactivate()
 
 
   ###
 
-    BEWARE: Here there be monsters! Don't dig too deep below this line.
+    BEWARE: Here there be monsters! Don't dig too deep below this line…
 
     ------------------------------------------------------------------------------------
 
@@ -111,12 +111,34 @@ class this.Janus
 
   _window_matchmedia: (mediaQuery) ->
 
-    window.matchMedia = undefined
     return @_mediaList[mediaQuery] = window.matchMedia(mediaQuery) if window.matchMedia
 
-    # [POLYFILL] for all browsers that don't support matchMedia()
-    @_matchMedia = new _matchMedia(this) unless @_matchMedia
-    @_matchMedia.nextQuery(mediaQuery)
+    ###
+      [POLYFILL] for all browsers that don't support matchMedia() at all (CSS media query support is mandatory though)
+    ###
+
+    # use native window events to wait and listen for changes
+    @_listen() unless @_listening
+
+    @_mediaList[mediaQuery] = new _matchMedia(mediaQuery) unless @_mediaList[mediaQuery]
+
+    # return the corresponding _matchMedia object
+    @_mediaList[mediaQuery]
+
+
+
+  _listen: () ->
+
+    evt = window.attachEvent || window.addEventListener
+
+    evt 'resize', () =>
+      mediaList._process() for mediaQuery, mediaList of @_mediaList
+
+    evt 'orientationChange', () =>
+      mediaList._process() for mediaQuery, mediaList of @_mediaList
+
+    @_listening = yes
+
 
 
   ###
@@ -138,42 +160,30 @@ class this.Janus
 ###
 class _matchMedia
 
-  media_list: {}
+  _callbacks: []
+
+  media: ''
+  matches: no
 
 
-  constructor: (@ref) ->
-
-    evt = window.attachEvent || window.addEventListener
-
-    evt('resize',            () => @_process())
-    evt('orientationChange', () => @_process())
-
+  constructor: (@media) ->
+    @matches = @_matches()
 
   # Mimic the native MediaQueryList.addListener() behaviour for @next_query
   addListener: (listener) ->
-
-    @media_list[@next_query] = {callbacks: [], result: no} unless @media_list[@next_query]
-
-    @media_list[@next_query].callbacks.push(listener)
-
-
-  # Store the query that the next listener will be assigned to
-  nextQuery: (@next_query) ->
-    this
+    @_callbacks.push(listener)
 
 
   _process: () ->
 
-    for mediaQuery, list of @media_list
+    current = @_matches()
+    return if @matches is current
 
-      result = @_match_media(mediaQuery)
-      continue if result is list.result
-
-      list.result = result
-      callback({ matches: result, media: mediaQuery }) for callback in list.callbacks
+    @matches = current
+    callback(this) for callback in @_callbacks
 
 
-  _match_media: (mediaQuery) ->
+  _matches: () ->
 
     unless @_test
       @_test = document.createElement('div')
@@ -181,7 +191,7 @@ class _matchMedia
       @_test.style.cssText = 'position:absolute;top:-100em'
       document.body.insertBefore(@_test, document.body.firstChild)
 
-    @_test.innerHTML = '&shy;<style media="' + mediaQuery + '">#janus-mq-test{width:42px;}</style>'
+    @_test.innerHTML = '&shy;<style media="' + @media + '">#janus-mq-test{width:42px;}</style>'
     @_test.removeChild(@_test.firstChild)
 
     @_test.offsetWidth is 42

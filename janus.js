@@ -100,22 +100,29 @@
       var _this = this;
       this.queries.push(mediaQuery);
       return this._window_matchmedia(mediaQuery).addListener(function(mql) {
-        var change, state, _i, _len, _ref, _results;
-        if (!_this.started) return;
-        change = mql.matches ? 'activate' : 'deactivate';
-        _ref = _this.states[mediaQuery];
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          state = _ref[_i];
-          _results.push(state[change]());
+        if (_this.started) {
+          return _this._update_state(_this.states[mediaQuery], mql.matches);
         }
-        return _results;
       });
+    };
+
+    Janus.prototype._update_state = function(states, active) {
+      var state, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = states.length; _i < _len; _i++) {
+        state = states[_i];
+        if (active) {
+          _results.push(state.activate());
+        } else {
+          _results.push(state.deactivate());
+        }
+      }
+      return _results;
     };
 
     /*
     
-        BEWARE: Here there be monsters! Don't dig too deep below this line.
+        BEWARE: Here there be monsters! Don't dig too deep below this line…
     
         ------------------------------------------------------------------------------------
     
@@ -136,12 +143,44 @@
     Janus.prototype._mediaList = {};
 
     Janus.prototype._window_matchmedia = function(mediaQuery) {
-      window.matchMedia = void 0;
       if (window.matchMedia) {
         return this._mediaList[mediaQuery] = window.matchMedia(mediaQuery);
       }
-      if (!this._matchMedia) this._matchMedia = new _matchMedia(this);
-      return this._matchMedia.nextQuery(mediaQuery);
+      /*
+            [POLYFILL] for all browsers that don't support matchMedia() at all (CSS media query support is mandatory though)
+      */
+      if (!this._listening) this._listen();
+      if (!this._mediaList[mediaQuery]) {
+        this._mediaList[mediaQuery] = new _matchMedia(mediaQuery);
+      }
+      return this._mediaList[mediaQuery];
+    };
+
+    Janus.prototype._listen = function() {
+      var evt,
+        _this = this;
+      evt = window.attachEvent || window.addEventListener;
+      evt('resize', function() {
+        var mediaList, mediaQuery, _ref, _results;
+        _ref = _this._mediaList;
+        _results = [];
+        for (mediaQuery in _ref) {
+          mediaList = _ref[mediaQuery];
+          _results.push(mediaList._process());
+        }
+        return _results;
+      });
+      evt('orientationChange', function() {
+        var mediaList, mediaQuery, _ref, _results;
+        _ref = _this._mediaList;
+        _results = [];
+        for (mediaQuery in _ref) {
+          mediaList = _ref[mediaQuery];
+          _results.push(mediaList._process());
+        }
+        return _results;
+      });
+      return this._listening = true;
     };
 
     /*
@@ -167,70 +206,43 @@
 
   _matchMedia = (function() {
 
-    _matchMedia.prototype.media_list = {};
+    _matchMedia.prototype._callbacks = [];
 
-    function _matchMedia(ref) {
-      var evt,
-        _this = this;
-      this.ref = ref;
-      evt = window.attachEvent || window.addEventListener;
-      evt('resize', function() {
-        return _this._process();
-      });
-      evt('orientationChange', function() {
-        return _this._process();
-      });
+    _matchMedia.prototype.media = '';
+
+    _matchMedia.prototype.matches = false;
+
+    function _matchMedia(media) {
+      this.media = media;
+      this.matches = this._matches();
     }
 
     _matchMedia.prototype.addListener = function(listener) {
-      if (!this.media_list[this.next_query]) {
-        this.media_list[this.next_query] = {
-          callbacks: [],
-          result: false
-        };
-      }
-      return this.media_list[this.next_query].callbacks.push(listener);
-    };
-
-    _matchMedia.prototype.nextQuery = function(next_query) {
-      this.next_query = next_query;
-      return this;
+      return this._callbacks.push(listener);
     };
 
     _matchMedia.prototype._process = function() {
-      var callback, list, mediaQuery, result, _ref, _results;
-      _ref = this.media_list;
+      var callback, current, _i, _len, _ref, _results;
+      current = this._matches();
+      if (this.matches === current) return;
+      this.matches = current;
+      _ref = this._callbacks;
       _results = [];
-      for (mediaQuery in _ref) {
-        list = _ref[mediaQuery];
-        result = this._match_media(mediaQuery);
-        if (result === list.result) continue;
-        list.result = result;
-        _results.push((function() {
-          var _i, _len, _ref2, _results2;
-          _ref2 = list.callbacks;
-          _results2 = [];
-          for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-            callback = _ref2[_i];
-            _results2.push(callback({
-              matches: result,
-              media: mediaQuery
-            }));
-          }
-          return _results2;
-        })());
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        callback = _ref[_i];
+        _results.push(callback(this));
       }
       return _results;
     };
 
-    _matchMedia.prototype._match_media = function(mediaQuery) {
+    _matchMedia.prototype._matches = function() {
       if (!this._test) {
         this._test = document.createElement('div');
         this._test.id = 'janus-mq-test';
         this._test.style.cssText = 'position:absolute;top:-100em';
         document.body.insertBefore(this._test, document.body.firstChild);
       }
-      this._test.innerHTML = '&shy;<style media="' + mediaQuery + '">#janus-mq-test{width:42px;}</style>';
+      this._test.innerHTML = '&shy;<style media="' + this.media + '">#janus-mq-test{width:42px;}</style>';
       this._test.removeChild(this._test.firstChild);
       return this._test.offsetWidth === 42;
     };
