@@ -148,7 +148,6 @@
     Janus.prototype._mediaList = {};
 
     Janus.prototype._window_matchmedia = function(mediaQuery) {
-      window.matchMedia = void 0;
       if (window.matchMedia) {
         return this._mediaList[mediaQuery] = window.matchMedia(mediaQuery);
       }
