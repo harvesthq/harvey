@@ -174,7 +174,6 @@ class _mediaQueryList
     @matches    = @_matches()
 
 
-  # Mimic the native MediaQueryList.addListener() behaviour for @next_query
   addListener: (listener) ->
 
     @_callbacks.push(listener)
