@@ -119,7 +119,9 @@ class this.Janus
 
   _window_matchmedia: (mediaQuery) ->
 
-    return @_mediaList[mediaQuery] = window.matchMedia(mediaQuery) if window.matchMedia
+    if window.matchMedia
+      @_mediaList[mediaQuery] = window.matchMedia(mediaQuery) if mediaQuery not of @_mediaList
+      return @_mediaList[mediaQuery]
 
     ###
       [POLYFILL] for all browsers that don't support matchMedia() at all (CSS media query support is mandatory though)

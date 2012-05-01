@@ -149,7 +149,10 @@
 
     Janus.prototype._window_matchmedia = function(mediaQuery) {
       if (window.matchMedia) {
-        return this._mediaList[mediaQuery] = window.matchMedia(mediaQuery);
+        if (!(mediaQuery in this._mediaList)) {
+          this._mediaList[mediaQuery] = window.matchMedia(mediaQuery);
+        }
+        return this._mediaList[mediaQuery];
       }
       /*
             [POLYFILL] for all browsers that don't support matchMedia() at all (CSS media query support is mandatory though)
