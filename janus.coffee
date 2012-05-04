@@ -37,12 +37,12 @@ class State
 
 class this.Janus
 
-  states   : {}
-  queries  : []
-  started  : no
+  @states   : {}
+  @queries  : []
+  @started  : no
 
 
-  attach: (mediaQuery, callback_setup, callback_on, callback_off) ->
+  @attach: (mediaQuery, callback_setup, callback_on, callback_off) ->
 
     unless @states.hasOwnProperty mediaQuery
       @states[mediaQuery] = []
@@ -54,14 +54,14 @@ class this.Janus
     state
 
 
-  detach: (state) ->
+  @detach: (state) ->
 
     for t, i in @states[state.condition]
       @states[t.condition][i] = undefined if state is t
 
 
 
-  start: () ->
+  @start: () ->
 
     return if @started
     @started = yes
@@ -73,13 +73,13 @@ class this.Janus
       @_update_states(states, yes) if @_window_matchmedia(mediaQuery).matches
 
 
-  stop: () ->
+  @stop: () ->
 
     @started = no
 
 
 
-  _watch_query: (mediaQuery) ->
+  @_watch_query: (mediaQuery) ->
 
     @queries.push(mediaQuery)
 
@@ -88,7 +88,7 @@ class this.Janus
     )
 
 
-  _update_states: (states, active) ->
+  @_update_states: (states, active) ->
 
     for state in states      
       if active then state.activate() else state.deactivate()
@@ -115,9 +115,9 @@ class this.Janus
     [FIX] for Firefox/Gecko browsers that lose reference to the
     MediaQueryList object unless it's being stored for runtime
   ###
-  _mediaList : {}
+  @_mediaList : {}
 
-  _window_matchmedia: (mediaQuery) ->
+  @_window_matchmedia: (mediaQuery) ->
 
     if window.matchMedia
       @_mediaList[mediaQuery] = window.matchMedia(mediaQuery) if mediaQuery not of @_mediaList
@@ -137,7 +137,7 @@ class this.Janus
 
 
 
-  _listen: () ->
+  @_listen: () ->
 
     evt = window.attachEvent || window.addEventListener
 
@@ -155,7 +155,7 @@ class this.Janus
     [FIX] for Webkit engines that only trigger MediaQueryListListener when
     there is at least one CSS selector for the respective media query
   ###
-  _add_css_for: (mediaQuery) ->
+  @_add_css_for: (mediaQuery) ->
 
     unless @style
       @style = document.createElement('style')

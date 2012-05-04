@@ -1,5 +1,5 @@
 (function() {
-  var janus, qry1, qry2, qry3;
+  var qry1, qry2, qry3;
 
   $('.dimensions').html('Width: ' + $(window).width() + 'px');
 
@@ -7,9 +7,7 @@
     return $('.dimensions').html('Width: ' + $(this).width() + 'px');
   });
 
-  janus = new Janus;
-
-  qry1 = janus.attach('screen and (min-width:600px) and (max-width:900px)', function() {
+  qry1 = Janus.attach('screen and (min-width:600px) and (max-width:900px)', function() {
     return console.log('SETUP', this.condition);
   }, function() {
     return console.log('ON', this.condition);
@@ -17,7 +15,9 @@
     return console.log('OFF', this.condition);
   });
 
-  qry2 = janus.attach('screen and (max-width:800px)', function() {
+  $('.media-queries').append('<li>screen and (min-width:600px) and (max-width:900px)</li>');
+
+  qry2 = Janus.attach('screen and (max-width:800px)', function() {
     return console.log('SETUP', this.condition);
   }, function() {
     return console.log('ON', this.condition);
@@ -25,7 +25,9 @@
     return console.log('OFF', this.condition);
   });
 
-  qry3 = janus.attach('screen and (max-width:500px)', function() {
+  $('.media-queries').append('<li>screen and (max-width:800px)</li>');
+
+  qry3 = Janus.attach('screen and (max-width:500px)', function() {
     return console.log('SETUP', this.condition);
   }, function() {
     return console.log('ON', this.condition);
@@ -33,6 +35,8 @@
     return console.log('OFF', this.condition);
   });
 
-  janus.start();
+  $('.media-queries').append('<li>screen and (max-width:500px)</li>');
+
+  Janus.start();
 
 }).call(this);

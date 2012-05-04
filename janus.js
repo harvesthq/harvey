@@ -45,13 +45,13 @@
 
     function Janus() {}
 
-    Janus.prototype.states = {};
+    Janus.states = {};
 
-    Janus.prototype.queries = [];
+    Janus.queries = [];
 
-    Janus.prototype.started = false;
+    Janus.started = false;
 
-    Janus.prototype.attach = function(mediaQuery, callback_setup, callback_on, callback_off) {
+    Janus.attach = function(mediaQuery, callback_setup, callback_on, callback_off) {
       var state;
       if (!this.states.hasOwnProperty(mediaQuery)) {
         this.states[mediaQuery] = [];
@@ -62,7 +62,7 @@
       return state;
     };
 
-    Janus.prototype.detach = function(state) {
+    Janus.detach = function(state) {
       var i, t, _len, _ref, _results;
       _ref = this.states[state.condition];
       _results = [];
@@ -77,7 +77,7 @@
       return _results;
     };
 
-    Janus.prototype.start = function() {
+    Janus.start = function() {
       var mediaQuery, states, _ref, _results;
       if (this.started) return;
       this.started = true;
@@ -97,11 +97,11 @@
       return _results;
     };
 
-    Janus.prototype.stop = function() {
+    Janus.stop = function() {
       return this.started = false;
     };
 
-    Janus.prototype._watch_query = function(mediaQuery) {
+    Janus._watch_query = function(mediaQuery) {
       var _this = this;
       this.queries.push(mediaQuery);
       return this._window_matchmedia(mediaQuery).addListener(function(mql) {
@@ -111,7 +111,7 @@
       });
     };
 
-    Janus.prototype._update_states = function(states, active) {
+    Janus._update_states = function(states, active) {
       var state, _i, _len, _results;
       _results = [];
       for (_i = 0, _len = states.length; _i < _len; _i++) {
@@ -145,9 +145,9 @@
         MediaQueryList object unless it's being stored for runtime
     */
 
-    Janus.prototype._mediaList = {};
+    Janus._mediaList = {};
 
-    Janus.prototype._window_matchmedia = function(mediaQuery) {
+    Janus._window_matchmedia = function(mediaQuery) {
       if (window.matchMedia) {
         if (!(mediaQuery in this._mediaList)) {
           this._mediaList[mediaQuery] = window.matchMedia(mediaQuery);
@@ -164,7 +164,7 @@
       return this._mediaList[mediaQuery];
     };
 
-    Janus.prototype._listen = function() {
+    Janus._listen = function() {
       var evt,
         _this = this;
       evt = window.attachEvent || window.addEventListener;
@@ -196,7 +196,7 @@
         there is at least one CSS selector for the respective media query
     */
 
-    Janus.prototype._add_css_for = function(mediaQuery) {
+    Janus._add_css_for = function(mediaQuery) {
       if (!this.style) {
         this.style = document.createElement('style');
         document.getElementsByTagName('head')[0].appendChild(this.style);

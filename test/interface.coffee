@@ -7,10 +7,7 @@ $(window).resize () ->
   $('.dimensions').html( 'Width: ' + $(this).width() + 'px')
 
 
-janus = new Janus
-
-
-qry1 = janus.attach('screen and (min-width:600px) and (max-width:900px)',
+qry1 = Janus.attach('screen and (min-width:600px) and (max-width:900px)',
 () ->
   console.log 'SETUP', this.condition
 () ->
@@ -18,8 +15,10 @@ qry1 = janus.attach('screen and (min-width:600px) and (max-width:900px)',
 () ->
   console.log 'OFF', this.condition
 )
+$('.media-queries').append('<li>screen and (min-width:600px) and (max-width:900px)</li>')
 
-qry2 = janus.attach('screen and (max-width:800px)',
+
+qry2 = Janus.attach('screen and (max-width:800px)',
 () ->
   console.log 'SETUP', this.condition
 () ->
@@ -27,9 +26,10 @@ qry2 = janus.attach('screen and (max-width:800px)',
 () ->
   console.log 'OFF', this.condition
 )
+$('.media-queries').append('<li>screen and (max-width:800px)</li>')
 
 
-qry3 = janus.attach('screen and (max-width:500px)',
+qry3 = Janus.attach('screen and (max-width:500px)',
 () ->
   console.log 'SETUP', this.condition
 () ->
@@ -37,7 +37,7 @@ qry3 = janus.attach('screen and (max-width:500px)',
 () ->
   console.log 'OFF', this.condition
 )
+$('.media-queries').append('<li>screen and (max-width:500px)</li>')
 
 
-
-janus.start()
+Janus.start()
