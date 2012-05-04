@@ -34,61 +34,43 @@ class State
 
 
 
-
 class this.Janus
 
-  states   : {}
-  queries  : []
-  started  : no
+  @states   : {}
+  @queries  : []
 
 
-  attach: (mediaQuery, callback_setup, callback_on, callback_off) ->
+  @attach: (mediaQuery, callbacks) ->
 
     unless @states.hasOwnProperty mediaQuery
       @states[mediaQuery] = []
       @_add_css_for(mediaQuery) # if userAgent is webkit to avoid extra DOM manipulation
 
-    state = new State(mediaQuery, callback_setup, callback_on, callback_off)
+    state = new State(mediaQuery, callbacks.setup, callbacks.on, callbacks.off)
     @states[mediaQuery].push(state)
+
+    @_watch_query(mediaQuery) unless mediaQuery in @queries
+    @_update_states([states], yes) if @_window_matchmedia(mediaQuery).matches
 
     state
 
 
-  detach: (state) ->
+  @detach: (state) ->
 
     for t, i in @states[state.condition]
       @states[t.condition][i] = undefined if state is t
 
 
-
-  start: () ->
-
-    return if @started
-    @started = yes
-
-    for mediaQuery, states of @states
-      @_watch_query(mediaQuery) unless mediaQuery in @queries
-
-      # activate states for all valid media queries initially
-      @_update_states(states, yes) if @_window_matchmedia(mediaQuery).matches
-
-
-  stop: () ->
-
-    @started = no
-
-
-
-  _watch_query: (mediaQuery) ->
+  @_watch_query: (mediaQuery) ->
 
     @queries.push(mediaQuery)
 
     @_window_matchmedia(mediaQuery).addListener((mql) =>
-      @_update_states(@states[mediaQuery], mql.matches) if @started
+      @_update_states(@states[mediaQuery], mql.matches)
     )
 
 
-  _update_states: (states, active) ->
+  @_update_states: (states, active) ->
 
     for state in states      
       if active then state.activate() else state.deactivate()
@@ -115,13 +97,14 @@ class this.Janus
     [FIX] for Firefox/Gecko browsers that lose reference to the
     MediaQueryList object unless it's being stored for runtime
   ###
-  _mediaList : {}
+  @_mediaList : {}
 
-  _window_matchmedia: (mediaQuery) ->
+  @_window_matchmedia: (mediaQuery) ->
 
     if window.matchMedia
       @_mediaList[mediaQuery] = window.matchMedia(mediaQuery) if mediaQuery not of @_mediaList
       return @_mediaList[mediaQuery]
+
 
     ###
       [POLYFILL] for all browsers that don't support matchMedia() at all (CSS media query support is mandatory though)
@@ -130,14 +113,14 @@ class this.Janus
     # use native window events to wait and listen for changes
     @_listen() unless @_listening
 
-    @_mediaList[mediaQuery] = new _mediaQueryList(mediaQuery) unless @_mediaList[mediaQuery]
+    @_mediaList[mediaQuery] = new _mediaQueryList(mediaQuery) if mediaQuery not of @_mediaList
 
     # return the corresponding _mediaQueryList object
     @_mediaList[mediaQuery]
 
 
 
-  _listen: () ->
+  @_listen: () ->
 
     evt = window.attachEvent || window.addEventListener
 
@@ -155,7 +138,7 @@ class this.Janus
     [FIX] for Webkit engines that only trigger MediaQueryListListener when
     there is at least one CSS selector for the respective media query
   ###
-  _add_css_for: (mediaQuery) ->
+  @_add_css_for: (mediaQuery) ->
 
     unless @style
       @style = document.createElement('style')
