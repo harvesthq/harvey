@@ -8,39 +8,6 @@
   var State, _mediaQueryList,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  State = (function() {
-
-    State.prototype.active = false;
-
-    State.prototype.is_setup = false;
-
-    function State(condition, setup, on, off) {
-      this.condition = condition;
-      this.setup = setup;
-      this.on = on;
-      this.off = off;
-    }
-
-    State.prototype.activate = function() {
-      if (this.active) return;
-      if (!this.is_setup) {
-        this.setup();
-        this.is_setup = true;
-      }
-      this.on();
-      return this.active = true;
-    };
-
-    State.prototype.deactivate = function() {
-      if (!this.active) return;
-      this.off();
-      return this.active = false;
-    };
-
-    return State;
-
-  })();
-
   this.Janus = (function() {
 
     function Janus() {}
@@ -183,6 +150,39 @@
     };
 
     return Janus;
+
+  })();
+
+  State = (function() {
+
+    State.prototype.active = false;
+
+    State.prototype.is_setup = false;
+
+    function State(condition, setup, on, off) {
+      this.condition = condition;
+      this.setup = setup;
+      this.on = on;
+      this.off = off;
+    }
+
+    State.prototype.activate = function() {
+      if (this.active) return;
+      if (!this.is_setup) {
+        this.setup();
+        this.is_setup = true;
+      }
+      this.on();
+      return this.active = true;
+    };
+
+    State.prototype.deactivate = function() {
+      if (!this.active) return;
+      this.off();
+      return this.active = false;
+    };
+
+    return State;
 
   })();
 

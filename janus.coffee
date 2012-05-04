@@ -3,37 +3,6 @@
   Janus StateManager — Copyright (c) 2012 Joschka Kintscher
 
 ###
-
-class State
-
-  active  : no
-  is_setup: no
-
-
-  constructor: (@condition, @setup, @on, @off) ->
-
-
-  activate: () ->
-
-    return if @active
-
-    unless @is_setup
-      @setup()
-      @is_setup = yes
-
-    @on()
-    @active = yes
-
-
-  deactivate: () ->
-
-    return unless @active
-
-    @off()
-    @active = no
-
-
-
 class this.Janus
 
   @states   : {}
@@ -145,6 +114,36 @@ class this.Janus
       document.getElementsByTagName('head')[0].appendChild(@style)
 
     @style.appendChild(document.createTextNode("@media #{mediaQuery} {.janus-test{}}"))
+
+
+
+class State
+
+  active  : no
+  is_setup: no
+
+
+  constructor: (@condition, @setup, @on, @off) ->
+
+
+  activate: () ->
+
+    return if @active
+
+    unless @is_setup
+      @setup()
+      @is_setup = yes
+
+    @on()
+    @active = yes
+
+
+  deactivate: () ->
+
+    return unless @active
+
+    @off()
+    @active = no
 
 
 
