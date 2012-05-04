@@ -49,16 +49,20 @@
 
     Janus.queries = [];
 
-    Janus.started = false;
-
-    Janus.attach = function(mediaQuery, callback_setup, callback_on, callback_off) {
+    Janus.attach = function(mediaQuery, callbacks) {
       var state;
       if (!this.states.hasOwnProperty(mediaQuery)) {
         this.states[mediaQuery] = [];
         this._add_css_for(mediaQuery);
       }
-      state = new State(mediaQuery, callback_setup, callback_on, callback_off);
+      state = new State(mediaQuery, callbacks.setup, callbacks.on, callbacks.off);
       this.states[mediaQuery].push(state);
+      if (__indexOf.call(this.queries, mediaQuery) < 0) {
+        this._watch_query(mediaQuery);
+      }
+      if (this._window_matchmedia(mediaQuery).matches) {
+        this._update_states([states], true);
+      }
       return state;
     };
 
@@ -77,37 +81,11 @@
       return _results;
     };
 
-    Janus.start = function() {
-      var mediaQuery, states, _ref, _results;
-      if (this.started) return;
-      this.started = true;
-      _ref = this.states;
-      _results = [];
-      for (mediaQuery in _ref) {
-        states = _ref[mediaQuery];
-        if (__indexOf.call(this.queries, mediaQuery) < 0) {
-          this._watch_query(mediaQuery);
-        }
-        if (this._window_matchmedia(mediaQuery).matches) {
-          _results.push(this._update_states(states, true));
-        } else {
-          _results.push(void 0);
-        }
-      }
-      return _results;
-    };
-
-    Janus.stop = function() {
-      return this.started = false;
-    };
-
     Janus._watch_query = function(mediaQuery) {
       var _this = this;
       this.queries.push(mediaQuery);
       return this._window_matchmedia(mediaQuery).addListener(function(mql) {
-        if (_this.started) {
-          return _this._update_states(_this.states[mediaQuery], mql.matches);
-        }
+        return _this._update_states(_this.states[mediaQuery], mql.matches);
       });
     };
 
@@ -158,7 +136,7 @@
             [POLYFILL] for all browsers that don't support matchMedia() at all (CSS media query support is mandatory though)
       */
       if (!this._listening) this._listen();
-      if (!this._mediaList[mediaQuery]) {
+      if (!(mediaQuery in this._mediaList)) {
         this._mediaList[mediaQuery] = new _mediaQueryList(mediaQuery);
       }
       return this._mediaList[mediaQuery];
