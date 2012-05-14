@@ -7,7 +7,7 @@
     return $('.dimensions').html('Width: ' + $(this).width() + 'px');
   });
 
-  qry1 = Janus.attach('screen and (min-width:600px) and (max-width:900px)', {
+  qry1 = Harvey.attach('screen and (min-width:600px) and (max-width:900px)', {
     setup: function() {
       return console.log('SETUP', this.condition);
     },
@@ -19,7 +19,7 @@
     }
   });
 
-  qry2 = Janus.attach('screen and (max-width:800px)', {
+  qry2 = Harvey.attach('screen and (max-width:800px)', {
     setup: function() {
       return console.log('SETUP', this.condition);
     },
@@ -31,7 +31,7 @@
     }
   });
 
-  qry3 = Janus.attach('screen and (max-width:500px)', {
+  qry3 = Harvey.attach('screen and (max-width:500px)', {
     setup: function() {
       return console.log('SETUP', this.condition);
     },

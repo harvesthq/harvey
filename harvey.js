@@ -1,22 +1,22 @@
 
 /*
 
-  Janus StateManager — Copyright (c) 2012 Joschka Kintscher
+  Harvey StateManager — Copyright (c) 2012 Joschka Kintscher
 */
 
 (function() {
   var State, _mediaQueryList,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  this.Janus = (function() {
+  this.Harvey = (function() {
 
-    function Janus() {}
+    function Harvey() {}
 
-    Janus.states = {};
+    Harvey.states = {};
 
-    Janus.queries = [];
+    Harvey.queries = [];
 
-    Janus.attach = function(mediaQuery, callbacks) {
+    Harvey.attach = function(mediaQuery, callbacks) {
       var state;
       if (!this.states.hasOwnProperty(mediaQuery)) {
         this.states[mediaQuery] = [];
@@ -33,7 +33,7 @@
       return state;
     };
 
-    Janus.detach = function(state) {
+    Harvey.detach = function(state) {
       var i, t, _len, _ref, _results;
       _ref = this.states[state.condition];
       _results = [];
@@ -48,7 +48,7 @@
       return _results;
     };
 
-    Janus._watch_query = function(mediaQuery) {
+    Harvey._watch_query = function(mediaQuery) {
       var _this = this;
       this.queries.push(mediaQuery);
       return this._window_matchmedia(mediaQuery).addListener(function(mql) {
@@ -56,7 +56,7 @@
       });
     };
 
-    Janus._update_states = function(states, active) {
+    Harvey._update_states = function(states, active) {
       var state, _i, _len, _results;
       _results = [];
       for (_i = 0, _len = states.length; _i < _len; _i++) {
@@ -90,9 +90,9 @@
         MediaQueryList object unless it's being stored for runtime
     */
 
-    Janus._mediaList = {};
+    Harvey._mediaList = {};
 
-    Janus._window_matchmedia = function(mediaQuery) {
+    Harvey._window_matchmedia = function(mediaQuery) {
       if (window.matchMedia) {
         if (!(mediaQuery in this._mediaList)) {
           this._mediaList[mediaQuery] = window.matchMedia(mediaQuery);
@@ -109,7 +109,7 @@
       return this._mediaList[mediaQuery];
     };
 
-    Janus._listen = function() {
+    Harvey._listen = function() {
       var evt,
         _this = this;
       evt = window.attachEvent || window.addEventListener;
@@ -141,15 +141,15 @@
         there is at least one CSS selector for the respective media query
     */
 
-    Janus._add_css_for = function(mediaQuery) {
+    Harvey._add_css_for = function(mediaQuery) {
       if (!this.style) {
         this.style = document.createElement('style');
         document.getElementsByTagName('head')[0].appendChild(this.style);
       }
-      return this.style.appendChild(document.createTextNode("@media " + mediaQuery + " {.janus-test{}}"));
+      return this.style.appendChild(document.createTextNode("@media " + mediaQuery + " {.harvey-test{}}"));
     };
 
-    return Janus;
+    return Harvey;
 
   })();
 
@@ -187,7 +187,7 @@
   })();
 
   /*
-    [FIX]/implementation of the matchMedia interface modified to work as a drop-in replacement for Janus
+    [FIX]/implementation of the matchMedia interface modified to work as a drop-in replacement for Harvey
   */
 
   _mediaQueryList = (function() {
@@ -218,14 +218,14 @@
     };
 
     _mediaQueryList.prototype._matches = function() {
-      if (!this._test) this._test = document.getElementById('janus-mq-test');
+      if (!this._test) this._test = document.getElementById('harvey-mq-test');
       if (!this._test) {
         this._test = document.createElement('div');
-        this._test.id = 'janus-mq-test';
+        this._test.id = 'harvey-mq-test';
         this._test.style.cssText = 'position:absolute;top:-100em';
         document.body.insertBefore(this._test, document.body.firstChild);
       }
-      this._test.innerHTML = '&shy;<style media="' + this.media + '">#janus-mq-test{width:42px;}</style>';
+      this._test.innerHTML = '&shy;<style media="' + this.media + '">#harvey-mq-test{width:42px;}</style>';
       this._test.removeChild(this._test.firstChild);
       return this._test.offsetWidth === 42;
     };

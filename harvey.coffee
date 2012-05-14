@@ -1,9 +1,9 @@
 ###
 
-  Janus StateManager — Copyright (c) 2012 Joschka Kintscher
+  Harvey StateManager — Copyright (c) 2012 Joschka Kintscher
 
 ###
-class this.Janus
+class this.Harvey
 
   @states   : {}
   @queries  : []
@@ -113,7 +113,7 @@ class this.Janus
       @style = document.createElement('style')
       document.getElementsByTagName('head')[0].appendChild(@style)
 
-    @style.appendChild(document.createTextNode("@media #{mediaQuery} {.janus-test{}}"))
+    @style.appendChild(document.createTextNode("@media #{mediaQuery} {.harvey-test{}}"))
 
 
 
@@ -148,7 +148,7 @@ class State
 
 
 ###
-  [FIX]/implementation of the matchMedia interface modified to work as a drop-in replacement for Janus
+  [FIX]/implementation of the matchMedia interface modified to work as a drop-in replacement for Harvey
 ###
 class _mediaQueryList
 
@@ -177,15 +177,15 @@ class _mediaQueryList
 
   _matches: () ->
 
-    @_test = document.getElementById('janus-mq-test') unless @_test
+    @_test = document.getElementById('harvey-mq-test') unless @_test
 
     unless @_test
       @_test = document.createElement('div')
-      @_test.id = 'janus-mq-test'
+      @_test.id = 'harvey-mq-test'
       @_test.style.cssText = 'position:absolute;top:-100em'
       document.body.insertBefore(@_test, document.body.firstChild)
 
-    @_test.innerHTML = '&shy;<style media="' + @media + '">#janus-mq-test{width:42px;}</style>'
+    @_test.innerHTML = '&shy;<style media="' + @media + '">#harvey-mq-test{width:42px;}</style>'
     @_test.removeChild(@_test.firstChild)
 
     @_test.offsetWidth is 42
