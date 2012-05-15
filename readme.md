@@ -5,6 +5,16 @@ Harvey is a state manager for CSS media queries. It has no dependencies and come
 For documentation, usage, and examples, see:
 [http://harvesthq.github.com/harvey](http://harvesthq.github.com/harvey)
 
+
+### Resources
+
+* Harvey was inspired by Nicholas C. Zakas' article on the different problems with matchMedia
+  http://www.nczonline.net/blog/2012/01/19/css-media-queries-in-javascript-part-2/
+
+* Harvey uses a variation of Paul Irish's matchMedia.js polyfill
+  https://github.com/paulirish/matchMedia.js
+
+
 ### Harvey Credits
 
 - Built by [Harvest](http://www.getharvest.com/). Want to work on projects like this? [We’re hiring](http://www.getharvest.com/careers)!
