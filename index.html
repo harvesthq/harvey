@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Harvey - CSS media query state management</title>
+  <link href="bootstrap/css/bootstrap.min.css" media="all" rel="stylesheet" type="text/css" />
+  <link href="bootstrap/css/bootstrap-responsive.min.css" media="all" rel="stylesheet" type="text/css" />
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+  <body data-spy="scroll" data-target=".subnav" data-offset="50">
+  <!-- Navbar
+    ================================================== -->
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="http://www.getharvest.com/">Built by Harvest</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+    <header class="jumbotron subhead" id="overview">
+      <h1>Harvey</h1>
+      <p class="lead">A state manager for CSS media queries</p>
+      <div class="subnav">
+        <ul class="nav nav-pills">
+          <li><a href="#whatitis">Explanation</a></li>
+          <li><a href="#demo">In Action</a></li>
+          <li><a href="#getit">Get It</a></li>
+          <li><a href="#credit">Credit</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <section id="whatitis">
+      <div class="page-header">
+        <h1>Why do I Need Harvey? <small>Hint: media queries aren't good enough.</small></h1>
+      </div>
+
+      <div class="row">
+        <div class="span6">
+          <p>Media queries are great for visual tweaks and simple behavioral switches, but they become difficult to rely on when behaviors change for larger or smaller devices. Harvey helps you monitor and manage those changes by firing an event whenever your media query is activated.</p>
+          <p>This method is preferable to relying on a screen resize event because you only receive an event when the query is matched -- not for every screen resize. Less testing and more doing.</p>
+        </div>
+        <div class="span6">
+          <div class="well">
+            <h4>Like the Ronco&reg; Roaster, just &ldquo;Set it and Forget it&rdquo;</h4>
+            <p style="padding-top: 1em;">
+              <b>Harvey.attach</b>('<em>screen and (min-width:600px) and (max-width:900px)</em>', {<br />
+                &nbsp;&nbsp;<b>setup:</b> <em>setup_function</em>, <span style="color: #666;">// called when the query becomes valid for the first time</span><br />
+                &nbsp;&nbsp;<b>on:</b> <em>on_function</em>, // <span style="color: #666;">called each time the query is activated</span><br />
+                &nbsp;&nbsp;<b>off:</b> <em>off_function</em> // <span style="color: #666;">called each time the query is deactivated</span><br />
+              });
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="demo">
+      <div class="row">
+        <div class="span12">
+          <h2>Enough talk, time for show.</h2>
+          <p>We're working on a snazzy demo to put right in this place. Until then, you can check out Harvey in action on the website for <a href="http://walkaboutnyc.com/">WalkaboutNYC</a>.
+        </div>
+      </div>
+    </section>
+    <section id="getit">
+      <div class="row">
+        <div class="span12">
+          <h2>Where to Get it</h2>
+          <p>On GitHub, of course:<br />
+            <a href="https://github.com/harvesthq/harvey">https://github.com/harvesthq/harvey</a></p>
+          <p>Please direct all feedback, questions and issues to the <a href="https://github.com/harvesthq/harvey/issues/">issue management</a> section.
+        </div>
+      </div>
+    </section>
+    <section id="credit">
+      <div class="row">
+        <div class="span12">
+          <h2>Harvey Credits</h2>
+          <ul>
+            <li>Built by <a href="http://www.getharvest.com/">Harvest</a>. Want to work on projects like this? <a href="http://www.getharvest.com/careers">We’re hiring</a></li>
+            <li>Concept and development by <a href="http://joschka.kintscher.me/">Joschka Kintscher</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
