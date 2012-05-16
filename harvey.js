@@ -28,7 +28,7 @@
         this._watch_query(mediaQuery);
       }
       if (this._window_matchmedia(mediaQuery).matches) {
-        this._update_states([states], true);
+        this._update_states([state], true);
       }
       return state;
     };

@@ -19,7 +19,7 @@ class this.Harvey
     @states[mediaQuery].push(state)
 
     @_watch_query(mediaQuery) unless mediaQuery in @queries
-    @_update_states([states], yes) if @_window_matchmedia(mediaQuery).matches
+    @_update_states([state], yes) if @_window_matchmedia(mediaQuery).matches
 
     state
 
