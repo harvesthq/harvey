@@ -15,11 +15,11 @@ class this.Harvey
       @coins[mediaQuery] = []
       @_add_css_for(mediaQuery) # (only) if userAgent is webkit (to avoid additional DOM manipulation)
 
-    coin = new coin(mediaQuery, callbacks?.setup, callbacks?.on, callbacks?.off)
+    coin = new Coin(mediaQuery, callbacks?.setup, callbacks?.on, callbacks?.off)
     @coins[mediaQuery].push(coin)
 
     @_watch_query(mediaQuery) unless mediaQuery in @queries
-    @_update_coins([coins], yes) if @_window_matchmedia(mediaQuery).matches
+    @_update_coins([coin], yes) if @_window_matchmedia(mediaQuery).matches
 
     coin
 
@@ -117,7 +117,7 @@ class this.Harvey
 
 
 
-class coin
+class Coin
 
   active  : no
   is_setup: no
@@ -176,17 +176,22 @@ class _mediaQueryList
 
 
   _matches: () ->
+    @_get_tester() unless @_tester
 
-    # try to retrieve any existing test element
-    @_test = document.getElementById('harvey-mq-test') unless @_test
+    @_tester.innerHTML = '&shy;<style media="' + @media + '">#harvey-mq-test{width:42px;}</style>'
+    @_tester.removeChild(@_tester.firstChild)
 
-    unless @_test
-      @_test = document.createElement('div')
-      @_test.id = 'harvey-mq-test'
-      @_test.style.cssText = 'position:absolute;top:-100em'
-      document.body.insertBefore(@_test, document.body.firstChild)
+    @_tester.offsetWidth is 42
 
-    @_test.innerHTML = '&shy;<style media="' + @media + '">#harvey-mq-test{width:42px;}</style>'
-    @_test.removeChild(@_test.firstChild)
 
-    @_test.offsetWidth is 42
+  _get_tester: () ->
+    @_tester = document.getElementById('harvey-mq-test')
+    @_build_tester() unless @_tester
+
+
+  _build_tester: () ->
+    @_tester = document.createElement('div')
+    @_tester.id = 'harvey-mq-test'
+    @_tester.style.cssText = 'position:absolute;top:-100em'
+    document.body.insertBefore(@_tester, document.body.firstChild)
+

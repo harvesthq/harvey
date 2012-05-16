@@ -5,7 +5,7 @@
 */
 
 (function() {
-  var coin, _mediaQueryList,
+  var Coin, _mediaQueryList,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   this.Harvey = (function() {
@@ -22,13 +22,13 @@
         this.coins[mediaQuery] = [];
         this._add_css_for(mediaQuery);
       }
-      coin = new coin(mediaQuery, callbacks != null ? callbacks.setup : void 0, callbacks != null ? callbacks.on : void 0, callbacks != null ? callbacks.off : void 0);
+      coin = new Coin(mediaQuery, callbacks != null ? callbacks.setup : void 0, callbacks != null ? callbacks.on : void 0, callbacks != null ? callbacks.off : void 0);
       this.coins[mediaQuery].push(coin);
       if (__indexOf.call(this.queries, mediaQuery) < 0) {
         this._watch_query(mediaQuery);
       }
       if (this._window_matchmedia(mediaQuery).matches) {
-        this._update_coins([coins], true);
+        this._update_coins([coin], true);
       }
       return coin;
     };
@@ -153,20 +153,20 @@
 
   })();
 
-  coin = (function() {
+  Coin = (function() {
 
-    coin.prototype.active = false;
+    Coin.prototype.active = false;
 
-    coin.prototype.is_setup = false;
+    Coin.prototype.is_setup = false;
 
-    function coin(condition, setup, on, off) {
+    function Coin(condition, setup, on, off) {
       this.condition = condition;
       this.setup = setup;
       this.on = on;
       this.off = off;
     }
 
-    coin.prototype.activate = function() {
+    Coin.prototype.activate = function() {
       if (this.active) return;
       if (!this.is_setup) {
         if (typeof this.setup === "function") this.setup();
@@ -176,13 +176,13 @@
       return this.active = true;
     };
 
-    coin.prototype.deactivate = function() {
+    Coin.prototype.deactivate = function() {
       if (!this.active) return;
       if (typeof this.off === "function") this.off();
       return this.active = false;
     };
 
-    return coin;
+    return Coin;
 
   })();
 
@@ -218,16 +218,22 @@
     };
 
     _mediaQueryList.prototype._matches = function() {
-      if (!this._test) this._test = document.getElementById('harvey-mq-test');
-      if (!this._test) {
-        this._test = document.createElement('div');
-        this._test.id = 'harvey-mq-test';
-        this._test.style.cssText = 'position:absolute;top:-100em';
-        document.body.insertBefore(this._test, document.body.firstChild);
-      }
-      this._test.innerHTML = '&shy;<style media="' + this.media + '">#harvey-mq-test{width:42px;}</style>';
-      this._test.removeChild(this._test.firstChild);
-      return this._test.offsetWidth === 42;
+      if (!this._tester) this._get_tester();
+      this._tester.innerHTML = '&shy;<style media="' + this.media + '">#harvey-mq-test{width:42px;}</style>';
+      this._tester.removeChild(this._tester.firstChild);
+      return this._tester.offsetWidth === 42;
+    };
+
+    _mediaQueryList.prototype._get_tester = function() {
+      this._tester = document.getElementById('harvey-mq-test');
+      if (!this._tester) return this._build_tester();
+    };
+
+    _mediaQueryList.prototype._build_tester = function() {
+      this._tester = document.createElement('div');
+      this._tester.id = 'harvey-mq-test';
+      this._tester.style.cssText = 'position:absolute;top:-100em';
+      return document.body.insertBefore(this._tester, document.body.firstChild);
     };
 
     return _mediaQueryList;
