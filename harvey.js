@@ -34,13 +34,13 @@
     };
 
     Harvey.detach = function(coin) {
-      var i, t, _len, _ref, _results;
+      var c, i, _len, _ref, _results;
       _ref = this.coins[coin.condition];
       _results = [];
       for (i = 0, _len = _ref.length; i < _len; i++) {
-        t = _ref[i];
-        if (coin === t) {
-          _results.push(this.coins[t.condition][i] = void 0);
+        c = _ref[i];
+        if (coin === c) {
+          _results.push(this.coins[c.condition][i] = void 0);
         } else {
           _results.push(void 0);
         }

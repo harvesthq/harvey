@@ -5,8 +5,8 @@
 ###
 class this.Harvey
 
-  @coins   : {}
-  @queries  : []
+  @coins  : {}
+  @queries: []
 
 
   @attach: (mediaQuery, callbacks) ->
@@ -26,8 +26,8 @@ class this.Harvey
 
   @detach: (coin) ->
 
-    for t, i in @coins[coin.condition]
-      @coins[t.condition][i] = undefined if coin is t
+    for c, i in @coins[coin.condition]
+      @coins[c.condition][i] = undefined if coin is c
 
 
   @_watch_query: (mediaQuery) ->
