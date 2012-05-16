@@ -1,33 +1,33 @@
 ###
 
-  Harvey StateManager — Copyright (c) 2012 Joschka Kintscher
+  Harvey coinManager — Copyright (c) 2012 Joschka Kintscher
 
 ###
 class this.Harvey
 
-  @states   : {}
-  @queries  : []
+  @coins  : {}
+  @queries: []
 
 
   @attach: (mediaQuery, callbacks) ->
 
-    unless @states.hasOwnProperty mediaQuery
-      @states[mediaQuery] = []
+    unless @coins.hasOwnProperty mediaQuery
+      @coins[mediaQuery] = []
       @_add_css_for(mediaQuery) # (only) if userAgent is webkit (to avoid additional DOM manipulation)
 
-    state = new State(mediaQuery, callbacks?.setup, callbacks?.on, callbacks?.off)
-    @states[mediaQuery].push(state)
+    coin = new Coin(mediaQuery, callbacks?.setup, callbacks?.on, callbacks?.off)
+    @coins[mediaQuery].push(coin)
 
     @_watch_query(mediaQuery) unless mediaQuery in @queries
-    @_update_states([state], yes) if @_window_matchmedia(mediaQuery).matches
+    @_update_coins([coin], yes) if @_window_matchmedia(mediaQuery).matches
 
-    state
+    coin
 
 
-  @detach: (state) ->
+  @detach: (coin) ->
 
-    for t, i in @states[state.condition]
-      @states[t.condition][i] = undefined if state is t
+    for c, i in @coins[coin.condition]
+      @coins[c.condition][i] = undefined if coin is c
 
 
   @_watch_query: (mediaQuery) ->
@@ -35,14 +35,14 @@ class this.Harvey
     @queries.push(mediaQuery)
 
     @_window_matchmedia(mediaQuery).addListener((mql) =>
-      @_update_states(@states[mediaQuery], mql.matches)
+      @_update_coins(@coins[mediaQuery], mql.matches)
     )
 
 
-  @_update_states: (states, active) ->
+  @_update_coins: (coins, active) ->
 
-    for state in states      
-      if active then state.activate() else state.deactivate()
+    for coin in coins      
+      if active then coin.activate() else coin.deactivate()
 
 
   ###
@@ -117,7 +117,7 @@ class this.Harvey
 
 
 
-class State
+class Coin
 
   active  : no
   is_setup: no
@@ -176,17 +176,22 @@ class _mediaQueryList
 
 
   _matches: () ->
+    @_get_tester() unless @_tester
 
-    # try to retrieve any existing test element
-    @_test = document.getElementById('harvey-mq-test') unless @_test
+    @_tester.innerHTML = '&shy;<style media="' + @media + '">#harvey-mq-test{width:42px;}</style>'
+    @_tester.removeChild(@_tester.firstChild)
 
-    unless @_test
-      @_test = document.createElement('div')
-      @_test.id = 'harvey-mq-test'
-      @_test.style.cssText = 'position:absolute;top:-100em'
-      document.body.insertBefore(@_test, document.body.firstChild)
+    @_tester.offsetWidth is 42
 
-    @_test.innerHTML = '&shy;<style media="' + @media + '">#harvey-mq-test{width:42px;}</style>'
-    @_test.removeChild(@_test.firstChild)
 
-    @_test.offsetWidth is 42
+  _get_tester: () ->
+    @_tester = document.getElementById('harvey-mq-test')
+    @_build_tester() unless @_tester
+
+
+  _build_tester: () ->
+    @_tester = document.createElement('div')
+    @_tester.id = 'harvey-mq-test'
+    @_tester.style.cssText = 'position:absolute;top:-100em'
+    document.body.insertBefore(@_tester, document.body.firstChild)
+
