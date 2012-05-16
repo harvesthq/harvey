@@ -13,9 +13,9 @@ class this.Harvey
 
     unless @states.hasOwnProperty mediaQuery
       @states[mediaQuery] = []
-      @_add_css_for(mediaQuery) # if userAgent is webkit to avoid extra DOM manipulation
+      @_add_css_for(mediaQuery) # (only) if userAgent is webkit (to avoid additional DOM manipulation)
 
-    state = new State(mediaQuery, callbacks.setup, callbacks.on, callbacks.off)
+    state = new State(mediaQuery, callbacks?.setup, callbacks?.on, callbacks?.off)
     @states[mediaQuery].push(state)
 
     @_watch_query(mediaQuery) unless mediaQuery in @queries
@@ -79,7 +79,7 @@ class this.Harvey
       [POLYFILL] for all browsers that don't support matchMedia() at all (CSS media query support is mandatory though)
     ###
 
-    # use native window events to wait and listen for changes
+    # use native window events to listen for changes
     @_listen() unless @_listening
 
     @_mediaList[mediaQuery] = new _mediaQueryList(mediaQuery) if mediaQuery not of @_mediaList
@@ -104,8 +104,8 @@ class this.Harvey
 
 
   ###
-    [FIX] for Webkit engines that only trigger MediaQueryListListener when
-    there is at least one CSS selector for the respective media query
+    [FIX] for Webkit engines that only trigger the MediaQueryListListener
+    when there is at least one CSS selector for the respective media query
   ###
   @_add_css_for: (mediaQuery) ->
 
@@ -131,10 +131,10 @@ class State
     return if @active
 
     unless @is_setup
-      @setup()
+      @setup?()
       @is_setup = yes
 
-    @on()
+    @on?()
     @active = yes
 
 
@@ -142,13 +142,13 @@ class State
 
     return unless @active
 
-    @off()
+    @off?()
     @active = no
 
 
 
 ###
-  [FIX]/implementation of the matchMedia interface modified to work as a drop-in replacement for Harvey
+  [FIX]/mimic of the matchMedia interface modified to work as a drop-in replacement for Harvey
 ###
 class _mediaQueryList
 
@@ -177,6 +177,7 @@ class _mediaQueryList
 
   _matches: () ->
 
+    # try to retrieve any existing test element
     @_test = document.getElementById('harvey-mq-test') unless @_test
 
     unless @_test

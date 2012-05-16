@@ -22,7 +22,7 @@
         this.states[mediaQuery] = [];
         this._add_css_for(mediaQuery);
       }
-      state = new State(mediaQuery, callbacks.setup, callbacks.on, callbacks.off);
+      state = new State(mediaQuery, callbacks != null ? callbacks.setup : void 0, callbacks != null ? callbacks.on : void 0, callbacks != null ? callbacks.off : void 0);
       this.states[mediaQuery].push(state);
       if (__indexOf.call(this.queries, mediaQuery) < 0) {
         this._watch_query(mediaQuery);
@@ -137,8 +137,8 @@
     };
 
     /*
-        [FIX] for Webkit engines that only trigger MediaQueryListListener when
-        there is at least one CSS selector for the respective media query
+        [FIX] for Webkit engines that only trigger the MediaQueryListListener
+        when there is at least one CSS selector for the respective media query
     */
 
     Harvey._add_css_for = function(mediaQuery) {
@@ -169,16 +169,16 @@
     State.prototype.activate = function() {
       if (this.active) return;
       if (!this.is_setup) {
-        this.setup();
+        if (typeof this.setup === "function") this.setup();
         this.is_setup = true;
       }
-      this.on();
+      if (typeof this.on === "function") this.on();
       return this.active = true;
     };
 
     State.prototype.deactivate = function() {
       if (!this.active) return;
-      this.off();
+      if (typeof this.off === "function") this.off();
       return this.active = false;
     };
 
@@ -187,7 +187,7 @@
   })();
 
   /*
-    [FIX]/implementation of the matchMedia interface modified to work as a drop-in replacement for Harvey
+    [FIX]/mimic of the matchMedia interface modified to work as a drop-in replacement for Harvey
   */
 
   _mediaQueryList = (function() {
