@@ -21,7 +21,7 @@ body {
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
 .navbar-inner {
-  background: #F36C00 url('documentation/bg_header.gif') repeat-x 0 0
+  background: #F36C00 url('bg_header.gif') repeat-x 0 0
 }
 .navbar-fixed-top .brand {
   padding-right: 0;
