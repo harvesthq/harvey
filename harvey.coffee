@@ -91,7 +91,7 @@ class this.Harvey
 
   @_listen: () ->
 
-    evt = window.attachEvent || window.addEventListener
+    evt = window.addEventListener || window.attachEvent
 
     evt 'resize', () =>
       mediaList._process() for mediaQuery, mediaList of @_mediaList
