@@ -13,7 +13,7 @@ class this.Harvey
 
     unless @coins.hasOwnProperty mediaQuery
       @coins[mediaQuery] = []
-      @_add_css_for(mediaQuery) # (only) if userAgent is webkit (to avoid additional DOM manipulation)
+      @_add_css_for(mediaQuery) # if userAgent is webkit (to avoid additional DOM manipulation)
 
     coin = new Coin(mediaQuery, callbacks?.setup, callbacks?.on, callbacks?.off)
     @coins[mediaQuery].push(coin)
@@ -92,6 +92,7 @@ class this.Harvey
   @_listen: () ->
 
     evt = window.addEventListener || window.attachEvent
+    # if IE8 use document.body.onresize = () =>
 
     evt 'resize', () =>
       mediaList._process() for mediaQuery, mediaList of @_mediaList
