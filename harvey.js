@@ -1,46 +1,46 @@
 
 /*
 
-  Harvey StateManager — Copyright (c) 2012 Joschka Kintscher
+  Harvey coinManager — Copyright (c) 2012 Joschka Kintscher
 */
 
 (function() {
-  var State, _mediaQueryList,
+  var coin, _mediaQueryList,
     __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   this.Harvey = (function() {
 
     function Harvey() {}
 
-    Harvey.states = {};
+    Harvey.coins = {};
 
     Harvey.queries = [];
 
     Harvey.attach = function(mediaQuery, callbacks) {
-      var state;
-      if (!this.states.hasOwnProperty(mediaQuery)) {
-        this.states[mediaQuery] = [];
+      var coin;
+      if (!this.coins.hasOwnProperty(mediaQuery)) {
+        this.coins[mediaQuery] = [];
         this._add_css_for(mediaQuery);
       }
-      state = new State(mediaQuery, callbacks != null ? callbacks.setup : void 0, callbacks != null ? callbacks.on : void 0, callbacks != null ? callbacks.off : void 0);
-      this.states[mediaQuery].push(state);
+      coin = new coin(mediaQuery, callbacks != null ? callbacks.setup : void 0, callbacks != null ? callbacks.on : void 0, callbacks != null ? callbacks.off : void 0);
+      this.coins[mediaQuery].push(coin);
       if (__indexOf.call(this.queries, mediaQuery) < 0) {
         this._watch_query(mediaQuery);
       }
       if (this._window_matchmedia(mediaQuery).matches) {
-        this._update_states([states], true);
+        this._update_coins([coins], true);
       }
-      return state;
+      return coin;
     };
 
-    Harvey.detach = function(state) {
+    Harvey.detach = function(coin) {
       var i, t, _len, _ref, _results;
-      _ref = this.states[state.condition];
+      _ref = this.coins[coin.condition];
       _results = [];
       for (i = 0, _len = _ref.length; i < _len; i++) {
         t = _ref[i];
-        if (state === t) {
-          _results.push(this.states[t.condition][i] = void 0);
+        if (coin === t) {
+          _results.push(this.coins[t.condition][i] = void 0);
         } else {
           _results.push(void 0);
         }
@@ -52,19 +52,19 @@
       var _this = this;
       this.queries.push(mediaQuery);
       return this._window_matchmedia(mediaQuery).addListener(function(mql) {
-        return _this._update_states(_this.states[mediaQuery], mql.matches);
+        return _this._update_coins(_this.coins[mediaQuery], mql.matches);
       });
     };
 
-    Harvey._update_states = function(states, active) {
-      var state, _i, _len, _results;
+    Harvey._update_coins = function(coins, active) {
+      var coin, _i, _len, _results;
       _results = [];
-      for (_i = 0, _len = states.length; _i < _len; _i++) {
-        state = states[_i];
+      for (_i = 0, _len = coins.length; _i < _len; _i++) {
+        coin = coins[_i];
         if (active) {
-          _results.push(state.activate());
+          _results.push(coin.activate());
         } else {
-          _results.push(state.deactivate());
+          _results.push(coin.deactivate());
         }
       }
       return _results;
@@ -153,20 +153,20 @@
 
   })();
 
-  State = (function() {
+  coin = (function() {
 
-    State.prototype.active = false;
+    coin.prototype.active = false;
 
-    State.prototype.is_setup = false;
+    coin.prototype.is_setup = false;
 
-    function State(condition, setup, on, off) {
+    function coin(condition, setup, on, off) {
       this.condition = condition;
       this.setup = setup;
       this.on = on;
       this.off = off;
     }
 
-    State.prototype.activate = function() {
+    coin.prototype.activate = function() {
       if (this.active) return;
       if (!this.is_setup) {
         if (typeof this.setup === "function") this.setup();
@@ -176,13 +176,13 @@
       return this.active = true;
     };
 
-    State.prototype.deactivate = function() {
+    coin.prototype.deactivate = function() {
       if (!this.active) return;
       if (typeof this.off === "function") this.off();
       return this.active = false;
     };
 
-    return State;
+    return coin;
 
   })();
 

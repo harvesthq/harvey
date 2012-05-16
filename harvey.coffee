@@ -1,33 +1,33 @@
 ###
 
-  Harvey StateManager — Copyright (c) 2012 Joschka Kintscher
+  Harvey coinManager — Copyright (c) 2012 Joschka Kintscher
 
 ###
 class this.Harvey
 
-  @states   : {}
+  @coins   : {}
   @queries  : []
 
 
   @attach: (mediaQuery, callbacks) ->
 
-    unless @states.hasOwnProperty mediaQuery
-      @states[mediaQuery] = []
+    unless @coins.hasOwnProperty mediaQuery
+      @coins[mediaQuery] = []
       @_add_css_for(mediaQuery) # (only) if userAgent is webkit (to avoid additional DOM manipulation)
 
-    state = new State(mediaQuery, callbacks?.setup, callbacks?.on, callbacks?.off)
-    @states[mediaQuery].push(state)
+    coin = new coin(mediaQuery, callbacks?.setup, callbacks?.on, callbacks?.off)
+    @coins[mediaQuery].push(coin)
 
     @_watch_query(mediaQuery) unless mediaQuery in @queries
-    @_update_states([states], yes) if @_window_matchmedia(mediaQuery).matches
+    @_update_coins([coins], yes) if @_window_matchmedia(mediaQuery).matches
 
-    state
+    coin
 
 
-  @detach: (state) ->
+  @detach: (coin) ->
 
-    for t, i in @states[state.condition]
-      @states[t.condition][i] = undefined if state is t
+    for t, i in @coins[coin.condition]
+      @coins[t.condition][i] = undefined if coin is t
 
 
   @_watch_query: (mediaQuery) ->
@@ -35,14 +35,14 @@ class this.Harvey
     @queries.push(mediaQuery)
 
     @_window_matchmedia(mediaQuery).addListener((mql) =>
-      @_update_states(@states[mediaQuery], mql.matches)
+      @_update_coins(@coins[mediaQuery], mql.matches)
     )
 
 
-  @_update_states: (states, active) ->
+  @_update_coins: (coins, active) ->
 
-    for state in states      
-      if active then state.activate() else state.deactivate()
+    for coin in coins      
+      if active then coin.activate() else coin.deactivate()
 
 
   ###
@@ -117,7 +117,7 @@ class this.Harvey
 
 
 
-class State
+class coin
 
   active  : no
   is_setup: no
