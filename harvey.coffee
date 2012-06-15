@@ -1,33 +1,33 @@
 ###
 
-  Harvey coinManager — Copyright (c) 2012 Joschka Kintscher
+  Harvey stateManager — Copyright (c) 2012 Joschka Kintscher
 
 ###
 class this.Harvey
 
-  @coins  : {}
+  @states : {}
   @queries: []
 
 
   @attach: (mediaQuery, callbacks) ->
 
-    unless @coins.hasOwnProperty mediaQuery
-      @coins[mediaQuery] = []
+    unless @states.hasOwnProperty mediaQuery
+      @states[mediaQuery] = []
       @_add_css_for(mediaQuery) # if userAgent is webkit (to avoid additional DOM manipulation)
 
-    coin = new Coin(mediaQuery, callbacks?.setup, callbacks?.on, callbacks?.off)
-    @coins[mediaQuery].push(coin)
+    state = new State(mediaQuery, callbacks?.setup, callbacks?.on, callbacks?.off)
+    @states[mediaQuery].push(state)
 
     @_watch_query(mediaQuery) unless mediaQuery in @queries
-    @_update_coins([coin], yes) if @_window_matchmedia(mediaQuery).matches
+    @_update_states([state], yes) if @_window_matchmedia(mediaQuery).matches
 
-    coin
+    state
 
 
-  @detach: (coin) ->
+  @detach: (state) ->
 
-    for c, i in @coins[coin.condition]
-      @coins[c.condition][i] = undefined if coin is c
+    for s, i in @states[state.condition]
+      @states[s.condition][i] = undefined if state is s
 
 
   @_watch_query: (mediaQuery) ->
@@ -35,14 +35,14 @@ class this.Harvey
     @queries.push(mediaQuery)
 
     @_window_matchmedia(mediaQuery).addListener((mql) =>
-      @_update_coins(@coins[mediaQuery], mql.matches)
+      @_update_states(@states[mediaQuery], mql.matches)
     )
 
 
-  @_update_coins: (coins, active) ->
+  @_update_states: (states, active) ->
 
-    for coin in coins      
-      if active then coin.activate() else coin.deactivate()
+    for state in states      
+      if active then state.activate() else state.deactivate()
 
 
   ###
@@ -118,7 +118,7 @@ class this.Harvey
 
 
 
-class Coin
+class State
 
   active  : no
   is_setup: no
@@ -149,7 +149,7 @@ class Coin
 
 
 ###
-  [FIX]/mimic of the matchMedia interface modified to work as a drop-in replacement for Harvey
+  [FIX]/mimic of the matchMedia interface, modified to work as a drop-in replacement for Harvey
 ###
 class _mediaQueryList
 
@@ -163,7 +163,7 @@ class _mediaQueryList
 
     @_callbacks.push(listener)
 
-    # same return value as native addListener method
+    # return undefined just like the native addListener method
     undefined
 
 

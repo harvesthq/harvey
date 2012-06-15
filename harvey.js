@@ -2,12 +2,12 @@
 
 /*
 
-  Harvey coinManager — Copyright (c) 2012 Joschka Kintscher
+  Harvey stateManager — Copyright (c) 2012 Joschka Kintscher
 */
 
 
 (function() {
-  var Coin, _mediaQueryList,
+  var State, _mediaQueryList,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   this.Harvey = (function() {
@@ -16,35 +16,35 @@
 
     function Harvey() {}
 
-    Harvey.coins = {};
+    Harvey.states = {};
 
     Harvey.queries = [];
 
     Harvey.attach = function(mediaQuery, callbacks) {
-      var coin;
-      if (!this.coins.hasOwnProperty(mediaQuery)) {
-        this.coins[mediaQuery] = [];
+      var state;
+      if (!this.states.hasOwnProperty(mediaQuery)) {
+        this.states[mediaQuery] = [];
         this._add_css_for(mediaQuery);
       }
-      coin = new Coin(mediaQuery, callbacks != null ? callbacks.setup : void 0, callbacks != null ? callbacks.on : void 0, callbacks != null ? callbacks.off : void 0);
-      this.coins[mediaQuery].push(coin);
+      state = new State(mediaQuery, callbacks != null ? callbacks.setup : void 0, callbacks != null ? callbacks.on : void 0, callbacks != null ? callbacks.off : void 0);
+      this.states[mediaQuery].push(state);
       if (__indexOf.call(this.queries, mediaQuery) < 0) {
         this._watch_query(mediaQuery);
       }
       if (this._window_matchmedia(mediaQuery).matches) {
-        this._update_coins([coin], true);
+        this._update_states([state], true);
       }
-      return coin;
+      return state;
     };
 
-    Harvey.detach = function(coin) {
-      var c, i, _i, _len, _ref, _results;
-      _ref = this.coins[coin.condition];
+    Harvey.detach = function(state) {
+      var i, s, _i, _len, _ref, _results;
+      _ref = this.states[state.condition];
       _results = [];
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-        c = _ref[i];
-        if (coin === c) {
-          _results.push(this.coins[c.condition][i] = void 0);
+        s = _ref[i];
+        if (state === s) {
+          _results.push(this.states[s.condition][i] = void 0);
         } else {
           _results.push(void 0);
         }
@@ -56,19 +56,19 @@
       var _this = this;
       this.queries.push(mediaQuery);
       return this._window_matchmedia(mediaQuery).addListener(function(mql) {
-        return _this._update_coins(_this.coins[mediaQuery], mql.matches);
+        return _this._update_states(_this.states[mediaQuery], mql.matches);
       });
     };
 
-    Harvey._update_coins = function(coins, active) {
-      var coin, _i, _len, _results;
+    Harvey._update_states = function(states, active) {
+      var state, _i, _len, _results;
       _results = [];
-      for (_i = 0, _len = coins.length; _i < _len; _i++) {
-        coin = coins[_i];
+      for (_i = 0, _len = states.length; _i < _len; _i++) {
+        state = states[_i];
         if (active) {
-          _results.push(coin.activate());
+          _results.push(state.activate());
         } else {
-          _results.push(coin.deactivate());
+          _results.push(state.deactivate());
         }
       }
       return _results;
@@ -163,22 +163,22 @@
 
   })();
 
-  Coin = (function() {
+  State = (function() {
 
-    Coin.name = 'Coin';
+    State.name = 'State';
 
-    Coin.prototype.active = false;
+    State.prototype.active = false;
 
-    Coin.prototype.is_setup = false;
+    State.prototype.is_setup = false;
 
-    function Coin(condition, setup, on, off) {
+    function State(condition, setup, on, off) {
       this.condition = condition;
       this.setup = setup;
       this.on = on;
       this.off = off;
     }
 
-    Coin.prototype.activate = function() {
+    State.prototype.activate = function() {
       if (this.active) {
         return;
       }
@@ -194,7 +194,7 @@
       return this.active = true;
     };
 
-    Coin.prototype.deactivate = function() {
+    State.prototype.deactivate = function() {
       if (!this.active) {
         return;
       }
@@ -204,12 +204,12 @@
       return this.active = false;
     };
 
-    return Coin;
+    return State;
 
   })();
 
   /*
-    [FIX]/mimic of the matchMedia interface modified to work as a drop-in replacement for Harvey
+    [FIX]/mimic of the matchMedia interface, modified to work as a drop-in replacement for Harvey
   */
 
 
