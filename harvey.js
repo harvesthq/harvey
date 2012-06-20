@@ -12,8 +12,7 @@
 
 
 (function() {
-  var State, _mediaQueryList,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  var State, _mediaQueryList;
 
   this.Harvey = (function() {
 
@@ -22,8 +21,6 @@
     function Harvey() {}
 
     Harvey.states = {};
-
-    Harvey.queries = [];
 
     /*
         Creates a new State object for the given media query using the passed hash
@@ -39,10 +36,10 @@
         this._add_css_for(mediaQuery);
       }
       state = new State(mediaQuery, callbacks != null ? callbacks.setup : void 0, callbacks != null ? callbacks.on : void 0, callbacks != null ? callbacks.off : void 0);
-      this.states[mediaQuery].push(state);
-      if (__indexOf.call(this.queries, mediaQuery) < 0) {
+      if (!this.states[mediaQuery].length) {
         this._watch_query(mediaQuery);
       }
+      this.states[mediaQuery].push(state);
       if (this._window_matchmedia(mediaQuery).matches) {
         this._update_states([state], true);
       }
@@ -80,7 +77,6 @@
 
     Harvey._watch_query = function(mediaQuery) {
       var _this = this;
-      this.queries.push(mediaQuery);
       return this._window_matchmedia(mediaQuery).addListener(function(mql) {
         return _this._update_states(_this.states[mediaQuery], mql.matches);
       });

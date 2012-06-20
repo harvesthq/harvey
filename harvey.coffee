@@ -13,8 +13,6 @@ class this.Harvey
   # Hash of all currently attached media queries and their corresponding states
   @states : {}
 
-  @queries: []
-
 
   ###
     Creates a new State object for the given media query using the passed hash
@@ -27,12 +25,12 @@ class this.Harvey
       @states[mediaQuery] = []
       @_add_css_for(mediaQuery) # @TODO if userAgent is webkit (to avoid additional DOM manipulation)
 
-    # instantiate and store the new State object
     state = new State(mediaQuery, callbacks?.setup, callbacks?.on, callbacks?.off)
-    @states[mediaQuery].push(state)
 
     # create a new listener for this query in case there is none already
-    @_watch_query(mediaQuery) unless mediaQuery in @queries
+    @_watch_query(mediaQuery) unless @states[mediaQuery].length
+
+    @states[mediaQuery].push(state)
 
     # check whether the new State is valid at the moment and set it up
     @_update_states([state], yes) if @_window_matchmedia(mediaQuery).matches
@@ -58,8 +56,6 @@ class this.Harvey
     @param  string  mediaQuery  A valid CSS media query to watch
   ###
   @_watch_query: (mediaQuery) ->
-
-    @queries.push(mediaQuery)
 
     @_window_matchmedia(mediaQuery).addListener((mql) =>
       @_update_states(@states[mediaQuery], mql.matches)
