@@ -2,7 +2,12 @@
 
 /*
 
-  Harvey stateManager — Copyright (c) 2012 Joschka Kintscher
+  Harvey, A Second Face for Your Application's JavaScript
+
+  Copyright 2012, Joschka Kintscher
+  Released under the MIT License
+
+  https://github.com/harvesthq/harvey/
 */
 
 
@@ -113,7 +118,7 @@
         * Inspired by Nicholas C. Zakas' article on the different problems with matchMedia
           http://www.nczonline.net/blog/2012/01/19/css-media-queries-in-javascript-part-2/
     
-        * Implementing a modified coffeescript version of Paul Irish's matchMedia.js polyfill
+        * Implementing a modified coffeescript version of Scott Jehl's and Paul Irish's matchMedia.js polyfill
           https://github.com/paulirish/matchMedia.js
     */
 

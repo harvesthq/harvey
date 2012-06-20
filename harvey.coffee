@@ -1,6 +1,11 @@
 ###
 
-  Harvey stateManager — Copyright (c) 2012 Joschka Kintscher
+  Harvey, A Second Face for Your Application's JavaScript
+
+  Copyright 2012, Joschka Kintscher
+  Released under the MIT License
+
+  https://github.com/harvesthq/harvey/
 
 ###
 class this.Harvey
@@ -29,7 +34,7 @@ class this.Harvey
     # create a new listener for this query in case there is none already
     @_watch_query(mediaQuery) unless mediaQuery in @queries
 
-    # check whether the new State is valid at the moment and needs to be set up
+    # check whether the new State is valid at the moment and set it up
     @_update_states([state], yes) if @_window_matchmedia(mediaQuery).matches
 
     # return the new state object
@@ -84,7 +89,7 @@ class this.Harvey
     * Inspired by Nicholas C. Zakas' article on the different problems with matchMedia
       http://www.nczonline.net/blog/2012/01/19/css-media-queries-in-javascript-part-2/
 
-    * Implementing a modified coffeescript version of Paul Irish's matchMedia.js polyfill
+    * Implementing a modified coffeescript version of Scott Jehl's and Paul Irish's matchMedia.js polyfill
       https://github.com/paulirish/matchMedia.js
   ###
 
