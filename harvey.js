@@ -2,13 +2,17 @@
 
 /*
 
-  Harvey coinManager — Copyright (c) 2012 Joschka Kintscher
+  Harvey, A Second Face for Your Application's JavaScript
+
+  Copyright 2012, Joschka Kintscher
+  Released under the MIT License
+
+  https://github.com/harvesthq/harvey/
 */
 
 
 (function() {
-  var Coin, _mediaQueryList,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  var State, _mediaQueryList;
 
   this.Harvey = (function() {
 
@@ -16,35 +20,47 @@
 
     function Harvey() {}
 
-    Harvey.coins = {};
+    Harvey.states = {};
 
-    Harvey.queries = [];
+    /*
+        Creates a new State object for the given media query using the passed hash
+        of callbacks and stores it in @states. The passed hash may contain up to
+        three callbacks. See documentation of the State class for more information.
+    */
+
 
     Harvey.attach = function(mediaQuery, callbacks) {
-      var coin;
-      if (!this.coins.hasOwnProperty(mediaQuery)) {
-        this.coins[mediaQuery] = [];
+      var state;
+      if (!this.states.hasOwnProperty(mediaQuery)) {
+        this.states[mediaQuery] = [];
         this._add_css_for(mediaQuery);
       }
-      coin = new Coin(mediaQuery, callbacks != null ? callbacks.setup : void 0, callbacks != null ? callbacks.on : void 0, callbacks != null ? callbacks.off : void 0);
-      this.coins[mediaQuery].push(coin);
-      if (__indexOf.call(this.queries, mediaQuery) < 0) {
+      state = new State(mediaQuery, callbacks != null ? callbacks.setup : void 0, callbacks != null ? callbacks.on : void 0, callbacks != null ? callbacks.off : void 0);
+      if (!this.states[mediaQuery].length) {
         this._watch_query(mediaQuery);
       }
+      this.states[mediaQuery].push(state);
       if (this._window_matchmedia(mediaQuery).matches) {
-        this._update_coins([coin], true);
+        this._update_states([state], true);
       }
-      return coin;
+      return state;
     };
 
-    Harvey.detach = function(coin) {
-      var c, i, _i, _len, _ref, _results;
-      _ref = this.coins[coin.condition];
+    /*
+        Removes a given State object from the @states hash.
+    
+        @param  object  state  A valid state object
+    */
+
+
+    Harvey.detach = function(state) {
+      var i, s, _i, _len, _ref, _results;
+      _ref = this.states[state.condition];
       _results = [];
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-        c = _ref[i];
-        if (coin === c) {
-          _results.push(this.coins[c.condition][i] = void 0);
+        s = _ref[i];
+        if (state === s) {
+          _results.push(this.states[s.condition][i] = void 0);
         } else {
           _results.push(void 0);
         }
@@ -52,30 +68,43 @@
       return _results;
     };
 
+    /*
+        Create a new matchMediaListener for the passed media query.
+    
+        @param  string  mediaQuery  A valid CSS media query to watch
+    */
+
+
     Harvey._watch_query = function(mediaQuery) {
       var _this = this;
-      this.queries.push(mediaQuery);
       return this._window_matchmedia(mediaQuery).addListener(function(mql) {
-        return _this._update_coins(_this.coins[mediaQuery], mql.matches);
+        return _this._update_states(_this.states[mediaQuery], mql.matches);
       });
     };
 
-    Harvey._update_coins = function(coins, active) {
-      var coin, _i, _len, _results;
+    /*
+        Activates/Deactivates every State object in the passed list.
+    
+        @param  array   states  A list of State objects to update
+        @param  boolean active Whether to activate or deactivate the given states
+    */
+
+
+    Harvey._update_states = function(states, active) {
+      var state, _i, _len, _results;
       _results = [];
-      for (_i = 0, _len = coins.length; _i < _len; _i++) {
-        coin = coins[_i];
+      for (_i = 0, _len = states.length; _i < _len; _i++) {
+        state = states[_i];
         if (active) {
-          _results.push(coin.activate());
+          _results.push(state.activate());
         } else {
-          _results.push(coin.deactivate());
+          _results.push(state.deactivate());
         }
       }
       return _results;
     };
 
     /*
-    
         BEWARE: You're at the edge of the map, mate. Here there be monsters!
     
         ------------------------------------------------------------------------------------
@@ -85,18 +114,25 @@
         * Inspired by Nicholas C. Zakas' article on the different problems with matchMedia
           http://www.nczonline.net/blog/2012/01/19/css-media-queries-in-javascript-part-2/
     
-        * Implementing a modified coffeescript version of Paul Irish's matchMedia.js polyfill
+        * Implementing a modified coffeescript version of Scott Jehl's and Paul Irish's matchMedia.js polyfill
           https://github.com/paulirish/matchMedia.js
     */
 
 
     /*
         [FIX] for Firefox/Gecko browsers that lose reference to the
-        MediaQueryList object unless it's being stored for runtime
+              MediaQueryList object unless it's being stored for runtime.
     */
 
 
     Harvey._mediaList = {};
+
+    /*
+        @param  string  mediaQuery      A valid CSS media query to monitor for updates
+        @Return object  MediaQueryList  Depending on the browser and matchMedia support either a native
+                                        mediaQueryList object or an instance of _mediaQueryList
+    */
+
 
     Harvey._window_matchmedia = function(mediaQuery) {
       if (window.matchMedia) {
@@ -106,7 +142,8 @@
         return this._mediaList[mediaQuery];
       }
       /*
-            [POLYFILL] for all browsers that don't support matchMedia() at all (CSS media query support is mandatory though)
+            [POLYFILL] for all browsers that don't support matchMedia() at all (CSS media query support
+                       is still mandatory though).
       */
 
       if (!this._listening) {
@@ -117,6 +154,12 @@
       }
       return this._mediaList[mediaQuery];
     };
+
+    /*
+        Add resize and orientationChange event listeners to the window element
+        to monitor updates to the viewport
+    */
+
 
     Harvey._listen = function() {
       var evt,
@@ -147,7 +190,9 @@
 
     /*
         [FIX] for Webkit engines that only trigger the MediaQueryListListener
-        when there is at least one CSS selector for the respective media query
+              when there is at least one CSS selector for the respective media query
+    
+        @param  string  MediaQuery  The media query to inject CSS for
     */
 
 
@@ -163,22 +208,49 @@
 
   })();
 
-  Coin = (function() {
+  /*
+    A State allows to execute a set of callbacks for the given valid CSS media query.
+  
+    Callbacks are executed in the context of their state object to allow access to the
+    corresponding media query of the State.
+  
+    States are not exposed to the global namespace. They can be used by calling the
+    static Harvey.attach() and Harvey.detach() methods.
+  */
 
-    Coin.name = 'Coin';
 
-    Coin.prototype.active = false;
+  State = (function() {
 
-    Coin.prototype.is_setup = false;
+    State.name = 'State';
 
-    function Coin(condition, setup, on, off) {
+    State.prototype.active = false;
+
+    State.prototype.is_setup = false;
+
+    /*
+        Creates a new State object
+    
+        @param  string    condition The media query to check for
+        @param  function  setup     Called the first time `condition` becomes valid
+        @param  function  on        Called every time `condition` becomes valid
+        @param  function  off       Called every time `condition` becomes invalid
+    */
+
+
+    function State(condition, setup, on, off) {
       this.condition = condition;
       this.setup = setup;
       this.on = on;
       this.off = off;
     }
 
-    Coin.prototype.activate = function() {
+    /*
+        Activate this State object if it is currently deactivated. Also perform all
+        set up tasks if this is the first time the State is activated
+    */
+
+
+    State.prototype.activate = function() {
       if (this.active) {
         return;
       }
@@ -194,7 +266,12 @@
       return this.active = true;
     };
 
-    Coin.prototype.deactivate = function() {
+    /*
+        Deactive this State object if it is currently active
+    */
+
+
+    State.prototype.deactivate = function() {
       if (!this.active) {
         return;
       }
@@ -204,12 +281,13 @@
       return this.active = false;
     };
 
-    return Coin;
+    return State;
 
   })();
 
   /*
-    [FIX]/mimic of the matchMedia interface modified to work as a drop-in replacement for Harvey
+    [FIX] simple implemenation of the matchMedia interface to mimic the native
+          matchMedia interface behaviour to work as a polyfill for Harvey
   */
 
 
@@ -217,16 +295,35 @@
 
     _mediaQueryList.name = '_mediaQueryList';
 
+    /*
+        Creates a new _mediaQueryList object
+    
+        @param  string  media  A valid CSS media query
+    */
+
+
     function _mediaQueryList(media) {
       this.media = media;
-      this._callbacks = [];
+      this._listeners = [];
       this.matches = this._matches();
     }
 
+    /*
+        Add a new listener to this mediaQueryList that will be called every time
+        the media query becomes valid
+    */
+
+
     _mediaQueryList.prototype.addListener = function(listener) {
-      this._callbacks.push(listener);
+      this._listeners.push(listener);
       return;
     };
+
+    /*
+        Evaluate the media query of this mediaQueryList object and notify
+        all registered listeners if the state has changed
+    */
+
 
     _mediaQueryList.prototype._process = function() {
       var callback, current, _i, _len, _ref, _results;
@@ -235,7 +332,7 @@
         return;
       }
       this.matches = current;
-      _ref = this._callbacks;
+      _ref = this._listeners;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         callback = _ref[_i];
@@ -243,6 +340,11 @@
       }
       return _results;
     };
+
+    /*
+        Check whether the media query is currently valid
+    */
+
 
     _mediaQueryList.prototype._matches = function() {
       if (!this._tester) {
@@ -253,12 +355,24 @@
       return this._tester.offsetWidth === 42;
     };
 
+    /*
+        Retrieve the element to test the media query on from the DOM or create
+        it if it has not been injected into the page yet
+    */
+
+
     _mediaQueryList.prototype._get_tester = function() {
       this._tester = document.getElementById('harvey-mq-test');
       if (!this._tester) {
         return this._build_tester();
       }
     };
+
+    /*
+        Create a new div with a unique id, move it outsite of the viewport and inject it into the DOM.
+        This element will be used to check whether the registered media query is currently valid.
+    */
+
 
     _mediaQueryList.prototype._build_tester = function() {
       this._tester = document.createElement('div');

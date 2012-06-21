@@ -15,8 +15,12 @@ body {
   background-image: url(/bootstrap/img/grid-18px-masked.png);
   background-repeat: repeat-x;
   background-position: 0 40px;
+  font-size: 14px;
 }
 
+p {
+  font-size: 14px;
+}
 
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
@@ -531,6 +535,10 @@ form.well {
 /* Tighten up spacing */
 .well hr {
   margin: 18px 0;
+}
+
+.code {
+  line-height: 1.6;
 }
 
 /* Fake the :focus state to demo it */

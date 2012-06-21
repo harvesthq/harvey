@@ -39,25 +39,23 @@
 
     <section id="whatitis">
       <div class="page-header">
-        <h1>Why do I Need Harvey? <small>Hint: media queries aren't good enough.</small></h1>
+        <h1>Create Responsive JavaScript</h1>
       </div>
 
       <div class="row">
         <div class="span6">
-          <h3>A state manager for CSS media queries</h3>
+          <h3></h3>
           <p>Media queries are great for visual tweaks and simple behavioral switches, but they become difficult to rely on when behaviors change for larger or smaller devices. Harvey helps you monitor and manage those changes by firing an event whenever your media query is activated.</p>
           <p>This method is preferable to relying on a screen resize event because you only receive an event when the query is matched -- not for every screen resize. Less testing and more doing.</p>
         </div>
         <div class="span6">
-          <div class="well">
-            <h4>Like the Ronco&reg; Roaster, just &ldquo;Set it and Forget it&rdquo;</h4>
-            <p style="padding-top: 1em;">
-              <b>Harvey.attach</b>('<em>screen and (min-width:600px) and (max-width:900px)</em>', {<br />
-                &nbsp;&nbsp;<b>setup:</b> <em>setup_function</em>, <span style="color: #666;">// called when the query becomes valid for the first time</span><br />
-                &nbsp;&nbsp;<b>on:</b> <em>on_function</em>, // <span style="color: #666;">called each time the query is activated</span><br />
-                &nbsp;&nbsp;<b>off:</b> <em>off_function</em> // <span style="color: #666;">called each time the query is deactivated</span><br />
-              });
-            </p>
+          <h3>The only thing you need to do</h3>
+          <div class="well code">
+            <b>Harvey.attach</b>( '<em>screen and (min-width:960px)</em>', {<br />
+              &nbsp;&nbsp;<b>setup:</b> <em>function() {}</em>,<br />
+              &nbsp;&nbsp;<b>on:</b> <em>function() {}</em>,<br />
+              &nbsp;&nbsp;<b>off:</b> <em>function() {}</em><br />
+            });
           </div>
         </div>
       </div>
