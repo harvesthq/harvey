@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <title>Harvey - CSS media query state management</title>
+  <title>Harvey - Add a Second Face to You Application's JavaScript</title>
   <link href="bootstrap/css/bootstrap.min.css" media="all" rel="stylesheet" type="text/css" />
   <link href="bootstrap/css/bootstrap-responsive.min.css" media="all" rel="stylesheet" type="text/css" />
   <link href="documentation/style.css" rel="stylesheet" type="text/css" />
@@ -26,7 +26,7 @@
 
     <header class="jumbotron subhead" id="overview">
       <h1>Harvey</h1>
-      <p class="lead">Adding a second face to your application's JavaScript</p>
+      <p class="lead">Add a Second Face to You Application's JavaScript</p>
       <div class="subnav">
         <ul class="nav nav-pills">
           <li><a href="#whatitis">Explanation</a></li>
@@ -38,25 +38,55 @@
     </header>
 
     <section id="whatitis">
+      <div class="row">
+        <p class="span12">
+          Responsive web design is inarguably the best way to build futureproof websites and applications.
+
+          But the one thing CSS media queries can't always help us with is optimizing our users' interactions for their output device.
+        </p>
+      </div>
+
       <div class="page-header">
-        <h1>Create Responsive JavaScript</h1>
+        <h1>Responsive JavaScript&mdash;finally</h1>
       </div>
 
       <div class="row">
         <div class="span6">
-          <h3></h3>
-          <p>Media queries are great for visual tweaks and simple behavioral switches, but they become difficult to rely on when behaviors change for larger or smaller devices. Harvey helps you monitor and manage those changes by firing an event whenever your media query is activated.</p>
-          <p>This method is preferable to relying on a screen resize event because you only receive an event when the query is matched -- not for every screen resize. Less testing and more doing.</p>
+          <p>
+            Harvey executes certain parts of your JavaScript under the condition of media queries.
+            It gives you complete control over all updates through three easy-to-use callbacks:
+          </p>
+
+          <dl class="callbacks">
+            <dt><code>setup</code></dt>
+            <dd>
+              Called the first time the media query becomes valid
+              <small class="tip">Use the setup callback to load extra assets or manipulate the DOM</small>
+            </dd>
+
+            <dt><code>on</code></dt>
+            <dd>
+              Called every time the media query becomes valid
+              <small class="tip">Use the on callback to reveal changes you made in setup()</small>
+            </dd>
+
+            <dt><code>off</code></dt>
+            <dd>
+              Called every time the media query becomes invalid
+              <small class="tip">Use the off callback to revert/hide changes you made in setup()</small>
+            </dd>
+          </dl>
         </div>
         <div class="span6">
-          <h3>The only thing you need to do</h3>
           <div class="well code">
-            <b>Harvey.attach</b>( '<em>screen and (min-width:960px)</em>', {<br />
+            <b>Harvey.attach</b>( '<em>screen and (min-width: 40em)</em>', {<br />
               &nbsp;&nbsp;<b>setup:</b> <em>function() {}</em>,<br />
               &nbsp;&nbsp;<b>on:</b> <em>function() {}</em>,<br />
               &nbsp;&nbsp;<b>off:</b> <em>function() {}</em><br />
             });
           </div>
+
+          <small class="tip">You can repeat this step multiple times and for any valid media query you like.</small>
         </div>
       </div>
     </section>

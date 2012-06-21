@@ -537,10 +537,6 @@ form.well {
   margin: 18px 0;
 }
 
-.code {
-  line-height: 1.6;
-}
-
 /* Fake the :focus state to demo it */
 .focused {
   border-color: rgba(82,168,236,.8);
@@ -852,3 +848,34 @@ form.well {
 }
 
 .active-mq { color: green; font-weight: bold; }
+
+/*  */
+.code {
+  line-height: 1.6;
+}
+
+.callbacks {
+  overflow: auto;
+  padding: 0.5em 0;
+}
+  .callbacks dt, .callbacks dd {
+    float: left;
+    margin-bottom: 0.75em;
+  }
+  .callbacks dt {
+    clear: left;
+    width: 40px;
+    font-weight: normal;
+    margin-right: 0.5em;
+  }
+
+.tip {
+  display: block;
+  margin: 0.25em 0 0;
+  color: #777;
+  font-size: 0.9em;
+}
+
+code {
+  color: #F70;
+}
