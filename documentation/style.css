@@ -20,23 +20,46 @@ body {
 
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
-.navbar-inner {
-  background: #F36C00 url('bg_header.gif') repeat-x 0 0
+.oss-bar {
+  top: 0;
+  right: 20px;
+  position: fixed;
+  z-index: 1030;
 }
-.navbar-fixed-top .brand {
-  padding-right: 0;
-  padding-left: 0;
-  margin-left: 20px;
+.oss-bar ul {
   float: right;
-
-  color: #FFF;
-  text-shadow: 0 1px 0 rgba(0,0,0,.1), 0 0 30px rgba(0,0,0,.125);
-  -webkit-transition: all .2s linear;
-     -moz-transition: all .2s linear;
-          transition: all .2s linear;
+  margin: 0;
+  list-style: none;
 }
-.navbar-fixed-top .brand:hover {
-  text-decoration: none;
+.oss-bar ul li {
+  float: left;
+  line-height: 0;
+}
+.oss-bar ul li a {
+  margin-top: -10px;
+  display: block;
+  height: 24px;  
+  background: #F36C00 url(oss-credit.png) no-repeat 20px 22px;
+  padding: 22px 20px 12px 20px;
+  text-indent: 120%; /* stupid padding */
+  white-space: nowrap;
+  overflow: hidden;
+  -webkit-transition: all 0.10s ease-in-out;
+  -moz-transition: all 0.10s ease-in-out;
+  transition: all 0.15s ease-in-out;
+}
+.oss-bar ul li a:hover {
+  margin-top: 0px;
+}
+.oss-bar a.harvest {
+  width: 156px;
+  background-color: #F36C00;
+  background-position: -142px 22px;
+  padding-right: 22px; /* optical illusion */
+}
+.oss-bar a.fork {
+  width: 122px;
+  background-color: #333333;
 }
 
 
@@ -655,8 +678,7 @@ form.well {
   /* Adjust the jumbotron */
   .jumbotron h1,
   .jumbotron p {
-    text-align: center;
-    margin-right: 0;
+   margin-right: 0;
   }
   .jumbotron h1 {
     font-size: 45px;
@@ -725,7 +747,7 @@ form.well {
 
   /* Remove any padding from the body */
   body {
-    padding-top: 0;
+    padding-top: 70px;
   }
 
   /* Jumbotron buttons */
@@ -803,7 +825,7 @@ form.well {
 
   /* Remove any padding from the body */
   body {
-    padding-top: 0;
+    padding-top: 70px;
   }
 
   /* Scale down the jumbotron content */
