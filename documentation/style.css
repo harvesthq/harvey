@@ -28,8 +28,6 @@ body {
 }
 .oss-bar ul {
   float: right;
-  margin: 0;
-  list-style: none;
 }
 .oss-bar ul li {
   float: left;
@@ -38,12 +36,12 @@ body {
 .oss-bar ul li a {
   margin-top: -10px;
   display: block;
-  height: 24px;  
-  background: #F36C00 url(oss-credit.png) no-repeat 20px 22px;
-  padding: 22px 20px 12px 20px;
-  text-indent: 120%; /* stupid padding */
+  height: 22px;  
+  background: #F36C00 url(oss-credit.png) no-repeat 18px 20px;
+  padding: 20px 18px 10px 18px;
   white-space: nowrap;
   overflow: hidden;
+  text-indent: 100%;
   -webkit-transition: all 0.10s ease-in-out;
   -moz-transition: all 0.10s ease-in-out;
   transition: all 0.15s ease-in-out;
@@ -52,16 +50,15 @@ body {
   margin-top: 0px;
 }
 .oss-bar a.harvest {
-  width: 156px;
+  width: 142px;
   background-color: #F36C00;
-  background-position: -142px 22px;
-  padding-right: 22px; /* optical illusion */
+  background-position: -136px 20px;
+  padding-right: 18px; /* optical illusion */
 }
 .oss-bar a.fork {
-  width: 122px;
+  width: 112px;
   background-color: #333333;
 }
-
 
 /* Space out sub-sections more
 -------------------------------------------------- */
