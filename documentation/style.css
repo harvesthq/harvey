@@ -17,22 +17,11 @@ body {
   background-position: 0 40px;
 }
 
-
-/* Tweak navbar brand link to be super sleek
+/* OSS Bar
 -------------------------------------------------- */
-.oss-bar {
-  top: 0;
-  right: 20px;
-  position: fixed;
-  z-index: 1030;
-}
-.oss-bar ul {
-  float: right;
-}
-.oss-bar ul li {
-  float: left;
-  line-height: 0;
-}
+.oss-bar { top: 0; right: 20px; position: fixed; z-index: 1030; }
+.oss-bar ul { float: right; }
+.oss-bar ul li { float: left; line-height: 0; margin: 0; }
 .oss-bar ul li a {
   margin-top: -10px;
   display: block;
@@ -46,19 +35,10 @@ body {
   -moz-transition: all 0.10s ease-in-out;
   transition: all 0.15s ease-in-out;
 }
-.oss-bar ul li a:hover {
-  margin-top: 0px;
-}
-.oss-bar a.harvest {
-  width: 142px;
-  background-color: #F36C00;
-  background-position: -136px 20px;
-  padding-right: 18px; /* optical illusion */
-}
-.oss-bar a.fork {
-  width: 112px;
-  background-color: #333333;
-}
+.oss-bar ul li a:hover { margin-top: 0px; }
+.oss-bar a.harvest { width: 142px; background-color: #F36C00; background-position: -136px 20px; }
+.oss-bar a.fork { width: 112px; background-color: #333333; }
+
 
 /* Space out sub-sections more
 -------------------------------------------------- */
