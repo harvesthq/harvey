@@ -20,8 +20,8 @@ body {
 /* OSS Bar
 -------------------------------------------------- */
 .oss-bar { top: 0; right: 20px; position: fixed; z-index: 1030; }
-.oss-bar ul { float: right; display: none; }
-.oss-bar ul li { float: left; line-height: 0; margin: 0; display: none; }
+.oss-bar ul { float: right; list-style: none; }
+.oss-bar ul li { float: left; line-height: 0; margin: 0; list-style: none; }
 .oss-bar ul li a {
   margin-top: -10px;
   display: block;
