@@ -197,9 +197,13 @@
     Harvey._add_css_for = function(mediaQuery) {
       if (!this.style) {
         this.style = document.createElement('style');
+        this.style.setAttribute('type', 'text/css');
         document.getElementsByTagName('head')[0].appendChild(this.style);
       }
-      return this.style.appendChild(document.createTextNode("@media " + mediaQuery + " {.harvey-test{}}"));
+      mediaQuery = "@media " + mediaQuery + " {.harvey-test{}}";
+      if (!this.style.styleSheet) {
+        return this.style.appendChild(document.createTextNode(mediaQuery));
+      }
     };
 
     return Harvey;

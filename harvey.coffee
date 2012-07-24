@@ -130,7 +130,6 @@ class this.Harvey
   @_listen: () ->
 
     evt = window.addEventListener || window.attachEvent
-    # @TODO if IE8 use document.body.onresize = () =>
 
     evt 'resize', () =>
       mediaList._process() for mediaQuery, mediaList of @_mediaList
@@ -152,9 +151,13 @@ class this.Harvey
 
     unless @style
       @style = document.createElement('style')
+      @style.setAttribute('type', 'text/css')
       document.getElementsByTagName('head')[0].appendChild(@style)
 
-    @style.appendChild(document.createTextNode("@media #{mediaQuery} {.harvey-test{}}"))
+    mediaQuery = "@media #{mediaQuery} {.harvey-test{}}"
+
+    unless @style.styleSheet
+      @style.appendChild(document.createTextNode(mediaQuery))
 
 
 ###
