@@ -104,7 +104,7 @@ class this.Harvey
   @_window_matchmedia: (mediaQuery) ->
 
     # always try to use the native matchMedia interface where available!
-    if window.matchMedia
+    if window.matchMedia and 'addListener' in window.matchMedia('all')
       @_mediaList[mediaQuery] = window.matchMedia(mediaQuery) if mediaQuery not of @_mediaList
       return @_mediaList[mediaQuery]
 
