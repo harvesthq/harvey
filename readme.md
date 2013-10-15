@@ -5,6 +5,9 @@ Harvey lets you add a second face to your application's JavaScript. It has no de
 For documentation, usage, and examples, see:
 [http://harvesthq.github.com/harvey](http://harvesthq.github.com/harvey)
 
+### Browser Support
+
+Thanks to its various fallbacks and polyfills Harvey works across all modern browsers (IE > 8) that support [CSS media queries](http://caniuse.com/#feat=css-mediaqueries).
 
 ### Resources
 
