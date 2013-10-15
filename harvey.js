@@ -133,7 +133,7 @@
 
 
     Harvey._window_matchmedia = function(mediaQuery) {
-      if (window.matchMedia) {
+      if (window.matchMedia && 'addListener' in window.matchMedia('all')) {
         if (!(mediaQuery in this._mediaList)) {
           this._mediaList[mediaQuery] = window.matchMedia(mediaQuery);
         }
