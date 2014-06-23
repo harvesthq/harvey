@@ -28,7 +28,6 @@ var deviceCheck = function(){
 		orientation.hide();
 	} else if ($(window).width() >= 1824) {
 		device.html('Large screens');
-		console.log('case7');
 	} else {
 		console.log('Sorry, this screen size does not seem to be standard');
 	}
