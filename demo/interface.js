@@ -11,6 +11,7 @@
   qry1 = Harvey.attach('screen and (min-width:600px) and (max-width:900px)', {
     setup: function() {
       return console.log('SETUP', this.condition);
+      
     },
     on: function() {
       return console.log('ON', this.condition);
