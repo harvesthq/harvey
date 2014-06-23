@@ -1,3 +1,9 @@
+body {
+	font-family: 'Helvetica', Arial, sans-serif;
+	font-size: 14px;
+	line-height: 25px;
+}
+
 .dimensions {
   position: absolute;
   top: 50%;
@@ -8,4 +14,18 @@
   text-align: center;
   font-size: 2em;
   font-weight: bold;
+}
+
+
+#device {
+	max-width: 50%;
+}
+
+p {
+	font-weight: bold;
+}
+
+span {
+	display: block;
+	font-weight: normal;
 }
